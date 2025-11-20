@@ -7,47 +7,38 @@ public class InventoryManager : MonoBehaviour
     public GameObject itemPrefab;
 
     public InventoryItemData testItemData;
-
+    public InventoryUI inventoryUI;
 
 
     private void Start()
     {
-        AddItem(testItemData);
-        AddItem(testItemData);
-        AddItem(testItemData);
-        AddItem(testItemData);
-        AddItem(testItemData);
-        AddItem(testItemData);
-        AddItem(testItemData);
-        AddItem(testItemData);
-        AddItem(testItemData);
-        AddItem(testItemData);
-        AddItem(testItemData);
-        AddItem(testItemData);
+        inventoryUI.CreateGrid();
 
+        for (int i = 0; i < 12; i++)
+        {
+            AddItem(testItemData);
+        }
     }
+
     public void AddItem(InventoryItemData data)
     {
         for (int y = 0; y < grid.height; y++)
         {
-            for (int x = 0; x < grid.widht; x++)
+            for (int x = 0; x < grid.width; x++)
             {
                 Vector2Int pos = new Vector2Int(x, y);
 
                 if (grid.IsCellFree(pos))
                 {
-                    GameObject obj = Instantiate(itemPrefab, grid.transform);
+                    RectTransform cell = inventoryUI.cells[x, y];
+                    GameObject obj = Instantiate(itemPrefab, cell);
                     InventoryItem item = obj.GetComponent<InventoryItem>();
                     item.SetData(data); // assigne le sprite
 
                     RectTransform rect = obj.GetComponent<RectTransform>();
 
                     rect.sizeDelta = new Vector2(64, 64);
-                    float spacing = 2f;
-                    rect.anchoredPosition = new Vector2(
-                        pos.x * (64 + spacing),
-                        -pos.y * (64 + spacing)
-                    );
+                    rect.anchoredPosition = Vector2.zero;
 
                     grid.PlaceItem(item, pos);
                     return;
@@ -57,4 +48,5 @@ public class InventoryManager : MonoBehaviour
 
         Debug.Log("Inventaire plein !");
     }
+
 }

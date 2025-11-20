@@ -1,12 +1,13 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CharacterStatsUI : MonoBehaviour
 {
-    public Text healthText;
-    public Text attackText;
-    public Text infectionText;
-    public Text fatigueText;
+    public TextMeshProUGUI healthText;
+    public TextMeshProUGUI attackText;
+    public TextMeshProUGUI infectionText;
+    public TextMeshProUGUI fatigueText;
 
     public void UpdateStats(int health, int attack, float infection, int fatigue)
     {

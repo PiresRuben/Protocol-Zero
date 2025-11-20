@@ -2,19 +2,19 @@ using UnityEngine;
 
 public class InventoryGrid : MonoBehaviour
 {
-	public int widht = 5;
+	public int width = 5;
 	public int height = 4;
 
 	private InventoryItem[,] grid;
 
     private void Awake()
     {
-		grid = new InventoryItem[widht, height];
+		grid = new InventoryItem[width, height];
     }
 
 	public bool IsCellFree(Vector2Int position)
 	{
-		if (position.x < 0 || position.y < 0 || position.x >= widht || position.y >= height)
+		if (position.x < 0 || position.y < 0 || position.x >= width || position.y >= height)
 		{
 			return false;
 		}
@@ -35,7 +35,7 @@ public class InventoryGrid : MonoBehaviour
 
 	public void RemoveItem(Vector2Int position)
 	{
-		if (position.x < 0 || position.y < 0 || position.x >= widht || position.y >= height)
+		if (position.x < 0 || position.y < 0 || position.x >= width || position.y >= height)
 		{
 			return;
 		}
