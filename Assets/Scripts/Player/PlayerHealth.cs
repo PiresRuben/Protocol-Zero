@@ -5,7 +5,11 @@ public class PlayerHealth : MonoBehaviour
 {
 
     public int maxHealth = 100;
-    int currentHealth;
+    public int currentHealth;
+
+    public int attack = 0;
+    public int fatigue = 0;
+    public float infection = 0.0f;
 
     public event Action<float> OnHealthChanged;
 

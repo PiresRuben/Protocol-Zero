@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     private float nextDashAllowedTime;
     private Vector2 lastMoveDir;
 
+    public InventoryManager inventoryManager;
     private void Awake()
     {
         inputActions = new PlayerInputActions();
@@ -24,11 +25,13 @@ public class PlayerController : MonoBehaviour
     {
         inputActions.Player.Enable();
         inputActions.Player.Dash.performed += OnDashPerformed;
+        inputActions.Player.Interact.performed += OnInteractPerformed;
     }
 
     private void OnDisable()
     {
         inputActions.Player.Dash.performed -= OnDashPerformed;
+        inputActions.Player.Interact.performed -= OnInteractPerformed;
         inputActions.Player.Disable();
     }
 
@@ -41,6 +44,24 @@ public class PlayerController : MonoBehaviour
         dashEndTime = Time.time + dashDuration;
         nextDashAllowedTime = Time.time + dashCooldown;
     }
+
+    private void OnInteractPerformed(InputAction.CallbackContext ctx)
+    {
+        Interact();
+    }
+
+    private void Interact()
+    {
+        if (!inventoryManager._isOpen)
+        {
+            inventoryManager.OpenInventory();
+        }
+        else if (inventoryManager._isOpen)
+        {
+            inventoryManager.CloseInventory();
+        }
+    }
+
 
     private void Update()
     {

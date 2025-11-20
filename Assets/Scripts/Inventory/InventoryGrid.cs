@@ -42,4 +42,16 @@ public class InventoryGrid : MonoBehaviour
 
 		grid[position.x, position.y] = null;
 	}
+
+    public void ClearGrid()
+    {
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                grid[x, y] = null;
+            }
+        }
+    }
+
 }
