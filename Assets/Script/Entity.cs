@@ -2,20 +2,38 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour 
 {
-    private float currenthp = 1;
+    public int maxHealth = 1;
+    public int currentHealth { get; protected set; }
 
 
     private void Die()
     {
-        if (currenthp <= 0) 
+        if (currentHealth <= 0) 
         {
-            DestroyImmediate(this);
+            Debug.Log("ded");
+            //DestroyImmediate(this);
         }
     }
 
-    private void TakeDamage(float damage)
+    public void TakeDamage(int amount)
     {
-        currenthp -= damage;
-        Die();
+        SetHealth(currentHealth - amount);
+    }
+
+    protected void Heal(int amount)
+    {
+        SetHealth(currentHealth + amount);
+    }
+
+    protected void SetHealth(int value)
+    {
+        currentHealth = value;
+
+        if (currentHealth < 0) currentHealth = 0;
+        if (currentHealth > maxHealth) currentHealth = maxHealth;
+
+
+
+        if (currentHealth == 0) Die();
     }
 }
