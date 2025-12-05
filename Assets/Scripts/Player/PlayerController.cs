@@ -25,13 +25,13 @@ public class PlayerController : MonoBehaviour
     {
         inputActions.Player.Enable();
         inputActions.Player.Dash.performed += OnDashPerformed;
-        inputActions.Player.Interact.performed += OnInteractPerformed;
+        inputActions.Player.Inventory.performed += OnInventoryPerformed;
     }
 
     private void OnDisable()
     {
         inputActions.Player.Dash.performed -= OnDashPerformed;
-        inputActions.Player.Interact.performed -= OnInteractPerformed;
+        inputActions.Player.Inventory.performed -= OnInventoryPerformed;
         inputActions.Player.Disable();
     }
 
@@ -45,12 +45,12 @@ public class PlayerController : MonoBehaviour
         nextDashAllowedTime = Time.time + dashCooldown;
     }
 
-    private void OnInteractPerformed(InputAction.CallbackContext ctx)
+    private void OnInventoryPerformed(InputAction.CallbackContext ctx)
     {
-        Interact();
+        Inventory();
     }
 
-    private void Interact()
+    private void Inventory()
     {
         if (!inventoryManager._isOpen)
         {
