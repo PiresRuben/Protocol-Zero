@@ -17,10 +17,11 @@ public class Ennemie : Entity
     [SerializeField] private float attackCooldown = 1.0f;
 
     private float timer = 0.0f;
-    private Vector2 centralView = Vector2.zero;
+    private Vector2 centralView;
 
 
-    [Header("Temporaire")]  
+    [Header("Temporaire")]
+    [SerializeField] private Transform fovObject; 
     [SerializeField] private Transform playerTransform;
     private PlayerHealth playerHealth = null;
 
@@ -35,11 +36,13 @@ public class Ennemie : Entity
     private void Start() // Il sera a l'avenir attribuer par le gameManager
     {
         playerHealth = playerTransform.GetComponent<PlayerHealth>();
+        centralView = transform.right;
+
     }
 
     void Update()
     {
-        centralView = transform.forward;
+
         switch (currentState)
         {
             case State.None:
@@ -62,15 +65,18 @@ public class Ennemie : Entity
 
     private void CheckNearbyPlayer()
     {
-        if (InRangeCheck(playerTransform.position, detectionRange))
+        if (PlayerInFieldOfView())
         {
-            Debug.Log("Ennemie detecter");
+            Debug.Log("Ennemie Vu");
             currentState = State.PlayerDetected;
+            return;
         }
+        HearNoise();
     }
 
     void OnDrawGizmos()
     {
+        centralView = transform.right;
         Gizmos.color = Color.blue;
 
         Gizmos.DrawWireSphere(transform.position, detectionRange);
@@ -80,14 +86,11 @@ public class Ennemie : Entity
         Gizmos.DrawWireSphere(transform.position, attackRange);
 
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position, centralView);
 
-        Gizmos.color = Color.yellow;
-        Vector3 endup = new Vector3(distanceOfView, Mathf.Tan(angleView/2) * distanceOfView,0);
-        Vector3 enddown = new Vector3(distanceOfView, Mathf.Tan(angleView/2) * distanceOfView,0);
-        Gizmos.DrawLine (transform.position, transform.position + endup);
-        Gizmos.DrawLine (transform.position, transform.position + enddown);
+        Gizmos.DrawRay(transform.position, centralView * distanceOfView);
+
     }
+
     private void Move(Vector3 destination)
     {
         Vector3 direction = Vector3.Normalize(destination - transform.position);
@@ -109,5 +112,24 @@ public class Ennemie : Entity
     private bool InRangeCheck(Vector3 inRange, float rangeValue)
     {
         return Vector3.Distance(transform.position, inRange) <= rangeValue;
+    }
+
+    private bool PlayerInFieldOfView()
+    {
+        Vector3 directionToPlayer = Vector3.Normalize(playerTransform.position - transform.position);
+        float angle = Vector3.Angle(directionToPlayer, centralView);
+        if ( angle <= angleView)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private void HearNoise()
+    {
+        //if (InRangeCheck(playerTransform.position, detectionRange) && )
+        //{
+        //    Debug.Log("Ennemie detecter");
+        //}
     }
 }
