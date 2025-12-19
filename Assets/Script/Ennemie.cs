@@ -1,7 +1,5 @@
 using System;
-using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class Ennemie : Entity
 {
@@ -19,6 +17,7 @@ public class Ennemie : Entity
     private float timer = 0.0f;
     private Vector2 centralView;
 
+    Vector3 directionToPlayer;
 
     [Header("Temporaire")]
     [SerializeField] private Transform fovObject; 
@@ -39,10 +38,14 @@ public class Ennemie : Entity
         centralView = transform.right;
 
     }
+    private void OnValidate()
+    {
+        centralView = transform.right;
+    }
 
     void Update()
     {
-
+        Vector3 directionToPlayer = Vector3.Normalize(playerTransform.position - transform.position);
         switch (currentState)
         {
             case State.None:
@@ -76,7 +79,6 @@ public class Ennemie : Entity
 
     void OnDrawGizmos()
     {
-        centralView = transform.right;
         Gizmos.color = Color.blue;
 
         Gizmos.DrawWireSphere(transform.position, detectionRange);
@@ -116,7 +118,7 @@ public class Ennemie : Entity
 
     private bool PlayerInFieldOfView()
     {
-        Vector3 directionToPlayer = Vector3.Normalize(playerTransform.position - transform.position);
+
         float angle = Vector3.Angle(directionToPlayer, centralView);
         if ( angle <= angleView)
         {
@@ -124,12 +126,21 @@ public class Ennemie : Entity
         }
         return false;
     }
+    public static Vector3 RotateVectorOnto(Vector3 vector, Vector3 from, Vector3 to)
+    {
+        // Calcule la rotation nécessaire pour orienter "from" vers "to"
+        Quaternion rot = Quaternion.FromToRotation(from, to);
 
+        // Applique cette rotation au vecteur donné
+        return rot * vector;
+    }
     private void HearNoise()
     {
-        //if (InRangeCheck(playerTransform.position, detectionRange) && )
-        //{
-        //    Debug.Log("Ennemie detecter");
-        //}
+        if (InRangeCheck(playerTransform.position, detectionRange))
+        {
+            centralView = RotateVectorOnto(centralView, centralView, directionToPlayer);
+        }
     }
+
+
 }
