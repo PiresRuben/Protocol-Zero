@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.AI;
+using Unity.VisualScripting;
 
 public class Survivor : MonoBehaviour
 {
@@ -28,9 +29,13 @@ public class Survivor : MonoBehaviour
     }
     private void Update()
     {
-        if (isCured)
+        if (isCured && Vector3.Distance(transform.position, player.transform.position) > detectorRange)
         {
             agent.SetDestination(player.transform.position);            
+        }
+        else
+        {
+            agent.SetDestination(transform.position);
         }
     }
     public void InjectSereum(InputAction.CallbackContext ctx)
