@@ -20,7 +20,7 @@ public class Ennemie : Entity
     Vector3 directionToPlayer;
 
     [Header("Temporaire")]
-    [SerializeField] private Transform fovObject; 
+    //[SerializeField] private Transform fovObject; 
     [SerializeField] private Transform playerTransform;
     private PlayerHealth playerHealth = null;
 
@@ -45,7 +45,7 @@ public class Ennemie : Entity
 
     void Update()
     {
-        Vector3 directionToPlayer = Vector3.Normalize(playerTransform.position - transform.position);
+        directionToPlayer = Vector3.Normalize(playerTransform.position - transform.position);
         switch (currentState)
         {
             case State.None:
@@ -71,6 +71,8 @@ public class Ennemie : Entity
         if (PlayerInFieldOfView())
         {
             Debug.Log("Ennemie Vu");
+            Debug.Log("Player trasnform: " + playerTransform.position);
+            Debug.Log("transform pos : " + transform.position);
             currentState = State.PlayerDetected;
             return;
         }
@@ -90,6 +92,10 @@ public class Ennemie : Entity
         Gizmos.color = Color.red;
 
         Gizmos.DrawRay(transform.position, centralView * distanceOfView);
+
+        Gizmos.color = Color.yellow;
+
+        Gizmos.DrawRay(transform.position, directionToPlayer * Vector3.Distance(transform.position, playerTransform.position));
 
     }
 
@@ -118,8 +124,8 @@ public class Ennemie : Entity
 
     private bool PlayerInFieldOfView()
     {
-
         float angle = Vector3.Angle(directionToPlayer, centralView);
+        //Debug.Log(centralView);
         if ( angle <= angleView)
         {
             return true;
