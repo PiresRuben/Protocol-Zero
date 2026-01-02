@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Ennemie : Entity
 {
@@ -8,6 +9,7 @@ public class Ennemie : Entity
     [SerializeField] private float moveSpeed = 0.3f;
     [SerializeField] private float angleView = 30.0f;
     [SerializeField] private float distanceOfView = 5.0f;
+    [SerializeField] private float rotationSpeed = 5f;
 
     [Header("Offensive Stat")]
     [SerializeField] private float attackRange = 0.5f;
@@ -17,7 +19,11 @@ public class Ennemie : Entity
     private float timer = 0.0f;
     private Vector2 centralView;
 
+
+    private Quaternion targetRotation = Quaternion.identity;
+
     Vector3 directionToPlayer;
+    NavMeshAgent agent;
 
     [Header("Temporaire")]
     //[SerializeField] private Transform fovObject; 
@@ -36,6 +42,9 @@ public class Ennemie : Entity
     {
         playerHealth = playerTransform.GetComponent<PlayerHealth>();
         centralView = transform.right;
+        agent = GetComponent<NavMeshAgent>();
+        agent.updateRotation = false;
+        agent.updateUpAxis = false;
 
     }
     private void OnValidate()
@@ -58,9 +67,13 @@ public class Ennemie : Entity
 
             case State.ChassingPlayer:
                 if (InRangeCheck(playerTransform.position, attackRange))
+                {
                     AttackPlayer();
+                    agent.SetDestination(transform.position);
+                }
+
                 else
-                    Move(playerTransform.position);
+                    agent.SetDestination(playerTransform.position);
                 break;
         }
 
@@ -91,9 +104,9 @@ public class Ennemie : Entity
 
         Gizmos.DrawRay(transform.position, centralView * distanceOfView);
 
-        Gizmos.color = Color.yellow;
+        //Gizmos.color = Color.black;
 
-        Gizmos.DrawRay(transform.position, directionToPlayer * Vector3.Distance(transform.position, playerTransform.position));
+        //Gizmos.DrawRay(transform.position, directionToPlayer * Vector3.Distance(transform.position, playerTransform.position));
 
     }
 
@@ -123,26 +136,25 @@ public class Ennemie : Entity
     private bool PlayerInFieldOfView()
     {
         float angle = Vector3.Angle(directionToPlayer, centralView);
-        //Debug.Log(centralView);
         if ( angle <= angleView)
         {
             return true;
         }
         return false;
     }
-    public static Vector3 RotateVectorOnto(Vector3 vector, Vector3 from, Vector3 to)
-    {
-        // Calcule la rotation nécessaire pour orienter "from" vers "to"
-        Quaternion rot = Quaternion.FromToRotation(from, to);
-
-        // Applique cette rotation au vecteur donné
-        return rot * vector;
-    }
     private void HearNoise()
     {
         if (InRangeCheck(playerTransform.position, detectionRange))
         {
-            centralView = RotateVectorOnto(centralView, centralView, directionToPlayer);
+            Vector3 directionToPlayer = (playerTransform.position - transform.position).normalized;
+            targetRotation = Quaternion.LookRotation(directionToPlayer);
+
+            Quaternion currentRot = Quaternion.LookRotation(centralView);
+            Quaternion smoothedRot = Quaternion.Slerp(currentRot, targetRotation, rotationSpeed * Time.deltaTime);
+
+            centralView = smoothedRot * Vector3.forward;
+
+
         }
     }
 
