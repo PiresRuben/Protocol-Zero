@@ -71,8 +71,6 @@ public class Ennemie : Entity
         if (PlayerInFieldOfView())
         {
             Debug.Log("Ennemie Vu");
-            Debug.Log("Player trasnform: " + playerTransform.position);
-            Debug.Log("transform pos : " + transform.position);
             currentState = State.PlayerDetected;
             return;
         }
