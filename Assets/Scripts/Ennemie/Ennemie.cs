@@ -30,13 +30,15 @@ public class Ennemie : Entity
     [SerializeField] private Transform playerTransform;
     private PlayerHealth playerHealth = null;
 
-    private enum State
+    [HideInInspector]
+    public enum State
     {
         None,
         PlayerDetected,
         ChassingPlayer
     }
-    private State currentState = State.None;
+    
+    public State currentState = State.None;
 
     private void Start() // Il sera a l'avenir attribuer par le gameManager
     {
