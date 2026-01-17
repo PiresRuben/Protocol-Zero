@@ -85,7 +85,7 @@ public class Ennemie : Entity
     {
         if (PlayerInFieldOfView())
         {
-            Debug.Log("Ennemie Vu");
+            //Debug.Log("Ennemie Vu");
             currentState = State.PlayerDetected;
             return;
         }
@@ -123,7 +123,7 @@ public class Ennemie : Entity
         timer += Time.deltaTime;
         if (timer >= attackCooldown)
         {
-            Debug.Log("Joueur attaquer");
+            //Debug.Log("Joueur attaquer");
             playerHealth.TakeDamage(damagePerHit);
             timer = 0.0f;
         }
