@@ -1,45 +1,42 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class InventoryManager : MonoBehaviour
 {
     public InventoryGrid grid;
     public GameObject itemPrefab;
-
     public InventoryItemData testItemData;
+    public InventoryItemData testItemData2;
     public InventoryUI inventoryUI;
     public GameObject inventoryPanel;
-    public List<InventoryItemData> items = new List<InventoryItemData>();
+
+    // Cette liste sert maintenant de "file d'attente" ou de stockage temporaire
+    public List<InventoryItemData> itemsToSpawn = new List<InventoryItemData>();
 
     public CharacterStatsUI displayStats;
     public PlayerHealth player;
 
     public bool _isOpen;
 
-    private void Awake()
-    {
-        _isOpen = false;
-    }
-
     private void Start()
     {
-        for (int i = 0; i < 12; i++)
+        // On initialise la UI une seule fois au début
+        inventoryUI.CreateGrid();
+
+        // Exemple : On ajoute quelques items de test
+        for (int i = 0; i < 5; i++)
         {
             AddItem(testItemData);
+            AddItem(testItemData2);
         }
-    }
 
+        inventoryPanel.SetActive(false);
+    }
 
     public void OpenInventory()
     {
         _isOpen = true;
-
         inventoryPanel.SetActive(true);
-        Debug.Log("Inventory Displayed");
-
-        inventoryUI.CreateGrid();
-        Debug.Log("Create Grid");
 
         displayStats.UpdateStats(
             player.currentHealth,
@@ -49,10 +46,9 @@ public class InventoryManager : MonoBehaviour
             player.fatigue
         );
 
-        Debug.Log("Display Item");
-        DisplayItems();
+        // On ne fait plus de "DisplayItems" ici car les objets 
+        // sont déjà placés physiquement dans la grille.
     }
-
 
     public void CloseInventory()
     {
@@ -60,61 +56,38 @@ public class InventoryManager : MonoBehaviour
         inventoryPanel.SetActive(false);
     }
 
-
+    // Tente d'ajouter un item à la première place disponible
     public void AddItem(InventoryItemData data)
     {
-        if (items.Count >= grid.width * grid.height)
-        {
-            Debug.Log("Inventaire plein !");
-            return;
-        }
-
-        items.Add(data);
-    }
-
-    public void DisplayItems()
-    {
-        // On vide d'abord la grille de données
-        grid.ClearGrid(); // je te donne la méthode juste après
-
-        // On enlève les anciens visuels
-        foreach (Transform cell in inventoryUI.transform)
-        {
-            if (cell.childCount > 0)
-            {
-                Destroy(cell.GetChild(0).gameObject);
-            }
-        }
-
-        int index = 0;
-
+        // On cherche dans toute la grille un endroit où la FORME passe
         for (int y = 0; y < grid.height; y++)
         {
             for (int x = 0; x < grid.width; x++)
             {
-                if (index >= items.Count)
-                    return;
-
-                Vector2Int pos = new Vector2Int(x, y);
-
-                if (grid.IsCellFree(pos))
+                Vector2Int potentialPos = new Vector2Int(x, y);
+                if (grid.CanPlaceShape(data, potentialPos))
                 {
-                    RectTransform cell = inventoryUI.cells[x, y];
-                    GameObject obj = Instantiate(itemPrefab, cell);
-
-                    InventoryItem item = obj.GetComponent<InventoryItem>();
-                    item.SetData(items[index]);
-
-                    RectTransform rect = obj.GetComponent<RectTransform>();
-                    rect.sizeDelta = new Vector2(64, 64);
-                    rect.anchoredPosition = Vector2.zero;
-
-                    grid.PlaceItem(item, pos);
-
-                    index++;
+                    SpawnItemInGrid(data, new Vector2Int(x, y));
+                    return;
                 }
             }
         }
+        Debug.Log("Inventaire plein pour cet objet !");
     }
 
+    // Crée physiquement l'objet dans la grille
+    private void SpawnItemInGrid(InventoryItemData data, Vector2Int pos)
+    {
+        RectTransform cell = inventoryUI.cells[pos.x, pos.y];
+        GameObject obj = Instantiate(itemPrefab, cell);
+
+        InventoryItem item = obj.GetComponent<InventoryItem>();
+        // On passe cellSize (64) pour que l'item ajuste sa taille visuelle
+        item.SetData(data, inventoryUI.cellSize);
+
+        RectTransform rect = obj.GetComponent<RectTransform>();
+        rect.anchoredPosition = Vector2.zero;
+
+        grid.PlaceItem(item, pos);
+    }
 }
