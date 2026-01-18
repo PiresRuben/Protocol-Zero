@@ -14,4 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Bandage
   itemIcon: {fileID: -2556243512109949567, guid: bc2dc2c7e2f239041b4ab8d1b1930265, type: 3}
-  size: {x: 1, y: 1}
+  shape:
+  - {x: 0, y: 0}
+  - {x: 0, y: 1}
+  - {x: 0, y: 2}
+  - {x: 1, y: 0}

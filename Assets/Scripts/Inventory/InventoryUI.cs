@@ -39,4 +39,19 @@ public class InventoryUI : MonoBehaviour
         gridCreated = true;
     }
 
+    public Vector2Int GetGridPositionFromMouse(Vector2 mousePos)
+    {
+        for (int y = 0; y < grid.height; y++)
+        {
+            for (int x = 0; x < grid.width; x++)
+            {
+                if (RectTransformUtility.RectangleContainsScreenPoint(cells[x, y], mousePos))
+                {
+                    return new Vector2Int(x, y);
+                }
+            }
+        }
+        return new Vector2Int(-1, -1);
+    }
+
 }
