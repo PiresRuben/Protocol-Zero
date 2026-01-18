@@ -347,7 +347,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2997627092720593302, guid: 4ff70d26166fbf04badbd981c4c41f24, type: 3}
       propertyPath: interactionRange
-      value: 1.25
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2997627092720593302, guid: 4ff70d26166fbf04badbd981c4c41f24, type: 3}
       propertyPath: zoneLayer.m_Bits

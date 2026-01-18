@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     private float nextDashAllowedTime;
     private Vector2 lastMoveDir;
 
+    public bool zombieNearby = false;
     public InventoryManager inventoryManager;
     private void Awake()
     {
@@ -78,6 +79,16 @@ public class PlayerController : MonoBehaviour
         else
         {
             transform.Translate(move * moveSpeed * Time.deltaTime);
+        }
+
+        Collider2D[] zombies = Physics2D.OverlapCircleAll(transform.position, 10f, LayerMask.GetMask("Zombie"));
+        if (zombies.Length > 0)
+        {
+            zombieNearby = true;
+        }
+        else
+        {
+            zombieNearby = false;
         }
     }
 }

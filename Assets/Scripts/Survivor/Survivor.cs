@@ -24,11 +24,12 @@ public class Survivor : MonoBehaviour
     [SerializeField]
     private LayerMask zombieLayer;
     private Collider2D[] detectedZombies;
+    private PlayerController playerController;
 
     [SerializeField]
     private LayerMask zoneLayer;
 
-    private Transform targetZone;
+    public Transform targetZone;
     public List<Transform> zones = new List<Transform>();
     private Transform currentZone = null;
 
@@ -45,11 +46,31 @@ public class Survivor : MonoBehaviour
         if (isCured)
         {
             detectedZombies = Physics2D.OverlapCircleAll(transform.position, detectorRange, zombieLayer);
-            if (detectedZombies.Length >= 1)
+            if (detectedZombies.Length >= 1 && playerController.zombieNearby)
             {
                 return SurvivorState.RunAway;
             }
-            else if (Vector3.Distance(transform.position, player.transform.position) > interactionRange)
+            else if (detectedZombies.Length == 0 && playerController.zombieNearby)
+            {
+                if (targetZone != null && Vector3.Distance(transform.position, targetZone.position) < 1f)
+                {
+                    if (zones.Count > 1)
+                    {
+                        zones.RemoveAt(0);
+                        UpdateTargetZone();
+                    }
+                    return SurvivorState.Stop;
+                }
+                else if ( currentState == SurvivorState.RunAway)
+                {
+                    return SurvivorState.RunAway;
+                }                
+                else
+                {
+                    return SurvivorState.Stop;
+                }
+            }
+            else if (Vector3.Distance(transform.position, player.transform.position) > interactionRange && !playerController.zombieNearby)
             {
                 return SurvivorState.FollowPlayer;
             }
@@ -76,12 +97,14 @@ public class Survivor : MonoBehaviour
 
         isCured = false;
 
+        playerController = player.GetComponent<PlayerController>();
     }
     private void Update()
     {
         UpdateZones();
 
         currentState = DetermineState(); 
+        Debug.Log("Survivor State: " + currentState.ToString());
         switch (currentState)
         {
             case SurvivorState.RunAway:
@@ -97,9 +120,8 @@ public class Survivor : MonoBehaviour
     }
     public void InjectSereum(InputAction.CallbackContext ctx)
     {
-        if (player.layer == gameObject.layer && Vector3.Distance(player.transform.position, transform.position) <= interactionRange)
+        if (Vector3.Distance(player.transform.position, transform.position) <= interactionRange)
         {
-            Debug.Log("Inject Sereum");
             isCured = true;
         }
     }
@@ -114,13 +136,7 @@ public class Survivor : MonoBehaviour
         agent.isStopped = false;
         if (targetZone != null)
         {
-            agent.SetDestination(targetZone.position);
-            if (Vector3.Distance(transform.position, targetZone.position) < 1f && zones.Count > 1)
-            {
-                zones.RemoveAt(0);
-                UpdateTargetZone();
-                Debug.Log("New Target Zone");
-            }
+            agent.SetDestination(targetZone.position); 
         }
         else
         {
@@ -141,7 +157,7 @@ public class Survivor : MonoBehaviour
     private void UpdateZones()
     {
         currentZone = Physics2D.OverlapPoint(transform.position, zoneLayer)?.transform;
-        if (currentState != SurvivorState.RunAway)
+        if (currentState == SurvivorState.FollowPlayer)
         {
             AddCurrentZone();
         }
@@ -165,6 +181,10 @@ public class Survivor : MonoBehaviour
         if (zones.Count >= 2)
         {
             targetZone = zones[0];
+        }
+        else
+        {
+            targetZone = null;
         }
     }
 
