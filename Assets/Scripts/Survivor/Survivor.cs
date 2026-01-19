@@ -14,6 +14,8 @@ public class Survivor : MonoBehaviour
     [SerializeField]
     private GameObject player;
     [SerializeField]
+    private GameObject zombiePrefab;
+    [SerializeField]
     private float interactionRange;
     [SerializeField]
     private float detectorRange = 5.0f;
@@ -29,9 +31,12 @@ public class Survivor : MonoBehaviour
     [SerializeField]
     private LayerMask zoneLayer;
 
-    public Transform targetZone;
-    public List<Transform> zones = new List<Transform>();
+    private Transform targetZone;
+    private List<Transform> zones = new List<Transform>();
     private Transform currentZone = null;
+
+    [SerializeField, Range(0,100)]
+    private int infectionChance = 20; // percentage chance of infection upon interaction
 
     public enum SurvivorState
     {
@@ -104,7 +109,6 @@ public class Survivor : MonoBehaviour
         UpdateZones();
 
         currentState = DetermineState(); 
-        Debug.Log("Survivor State: " + currentState.ToString());
         switch (currentState)
         {
             case SurvivorState.RunAway:
@@ -122,7 +126,17 @@ public class Survivor : MonoBehaviour
     {
         if (Vector3.Distance(player.transform.position, transform.position) <= interactionRange)
         {
-            isCured = true;
+            int roll = UnityEngine.Random.Range(1, 101);
+            if (roll <= infectionChance)
+            {
+                Instantiate(zombiePrefab, transform.position, Quaternion.identity);
+                DestroyImmediate(gameObject);
+            }
+            else
+            {
+                Debug.Log("Survivor cured!");
+                isCured = true;
+            }
         }
     }
 

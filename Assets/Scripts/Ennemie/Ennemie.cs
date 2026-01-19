@@ -42,12 +42,16 @@ public class Ennemie : Entity
 
     private void Start() // Il sera a l'avenir attribuer par le gameManager
     {
-        playerHealth = playerTransform.GetComponent<PlayerHealth>();
+        transform.rotation = Quaternion.identity;
         centralView = transform.right;
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
 
+        if (playerTransform == null)
+            playerTransform = GameObject.FindGameObjectsWithTag("Player")[0].transform;
+
+        playerHealth = playerTransform.GetComponent<PlayerHealth>();
     }
     private void OnValidate()
     {
@@ -56,6 +60,7 @@ public class Ennemie : Entity
 
     void Update()
     {
+        Debug.Log(transform.rotation.eulerAngles);
         directionToPlayer = Vector3.Normalize(playerTransform.position - transform.position);
         switch (currentState)
         {
