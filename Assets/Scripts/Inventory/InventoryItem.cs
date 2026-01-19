@@ -1,42 +1,110 @@
-using System;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class InventoryItem : MonoBehaviour
+public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerDownHandler
 {
     public InventoryItemData data;
-    private Vector2Int gridposition;
-
-    private Image iconImage;
+    private Vector2Int gridPosition;
+    private CanvasGroup canvasGroup;
+    private RectTransform rect;
 
     private void Awake()
     {
-        // Récupère l'Image sur le prefab (l'enfant ou le même GameObject)
-        iconImage = GetComponent<Image>();
+        rect = GetComponent<RectTransform>();
+
+        canvasGroup = GetComponent<CanvasGroup>();
+        if (canvasGroup == null) canvasGroup = gameObject.AddComponent<CanvasGroup>();
+
+        Image img = GetComponent<Image>();
+        if (img == null) img = gameObject.AddComponent<Image>();
+        img.color = new Color(0, 0, 0, 0); // Transparent
+        img.raycastTarget = true;
     }
 
-    public void SetData(InventoryItemData newData)
+    public void SetData(InventoryItemData newData, int cellSize)
     {
         data = newData;
+        rect = GetComponent<RectTransform>();
 
-        if (iconImage != null && data != null && data.itemIcon != null)
+        Vector2Int bounds = data.GetBounds();
+        rect.sizeDelta = new Vector2(bounds.x * cellSize, bounds.y * cellSize);
+
+        Image parentImg = GetComponent<Image>();
+        if (parentImg == null) parentImg = gameObject.AddComponent<Image>();
+        parentImg.raycastTarget = true;
+
+        foreach (Transform child in transform) { Destroy(child.gameObject); }
+
+        foreach (Vector2Int offset in data.shape)
         {
-            iconImage.sprite = data.itemIcon; // assign the sprite
-            iconImage.enabled = true;     // in case he is disabled
+            GameObject block = new GameObject("VisibleBlock", typeof(Image));
+            block.transform.SetParent(this.transform);
+
+            RectTransform rt = block.GetComponent<RectTransform>();
+            rt.localScale = Vector3.one;
+            rt.sizeDelta = new Vector2(cellSize, cellSize);
+            rt.pivot = new Vector2(0, 1);
+            rt.anchorMin = new Vector2(0, 1);
+            rt.anchorMax = new Vector2(0, 1);
+            rt.anchoredPosition = new Vector2(offset.x * cellSize, -offset.y * cellSize);
+
+            Image bImg = block.GetComponent<Image>();
+            bImg.sprite = data.itemIcon; // On met le bandage sur CHAQUE bloc
+            bImg.raycastTarget = false;
+
         }
     }
 
 
-    public void SetGridPosition(Vector2Int pos)
+    // Drag & Drop handlers
+    public void OnPointerDown(PointerEventData eventData)
     {
-        gridposition = pos;
+        Debug.Log("Clic détecté sur l'objet !");
     }
 
-    public Vector2Int GetGridPosition()
+    public void OnBeginDrag(PointerEventData eventData)
     {
-        return gridposition;
+        Debug.Log("Début du Drag");
+        Object.FindObjectOfType<InventoryGrid>().RemoveItem(this);
+
+        transform.SetParent(transform.root.GetComponentInChildren<Canvas>().transform);
+
+        canvasGroup.blocksRaycasts = false;
+        canvasGroup.alpha = 0.6f;
     }
 
+    public void OnDrag(PointerEventData eventData)
+    {
+        // On suit la souris
+        transform.position = eventData.position;
+    }
 
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        Debug.Log("Fin du Drag");
+        canvasGroup.blocksRaycasts = true;
+        canvasGroup.alpha = 1f;
+
+        InventoryUI ui = Object.FindObjectOfType<InventoryUI>();
+        InventoryGrid grid = Object.FindObjectOfType<InventoryGrid>();
+        Vector2Int targetPos = ui.GetGridPositionFromMouse(eventData.position);
+
+        if (targetPos.x != -1 && grid.CanPlaceShape(data, targetPos))
+        {
+            grid.PlaceItem(this, targetPos);
+            transform.SetParent(ui.cells[targetPos.x, targetPos.y]);
+            rect.anchoredPosition = Vector2.zero;
+        }
+        else
+        {
+            // Retour à l'envoyeur
+            grid.PlaceItem(this, gridPosition);
+            transform.SetParent(ui.cells[gridPosition.x, gridPosition.y]);
+            rect.anchoredPosition = Vector2.zero;
+        }
+    }
+
+    public void SetGridPosition(Vector2Int pos) => gridPosition = pos;
+    public Vector2Int GetGridPosition() => gridPosition;
 }

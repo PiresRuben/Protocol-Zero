@@ -17,6 +17,8 @@ public class PlayerController : MonoBehaviour
     private float nextDashAllowedTime;
     private Vector2 lastMoveDir;
 
+    public bool zombieNearby = false;
+    public InventoryManager inventoryManager;
     private void Awake()
     {
         inputActions = new PlayerInputActions();
@@ -27,11 +29,13 @@ public class PlayerController : MonoBehaviour
     {
         inputActions.Player.Enable();
         inputActions.Player.Dash.performed += OnDashPerformed;
+        inputActions.Player.Inventory.performed += OnInventoryPerformed;
     }
 
     private void OnDisable()
     {
         inputActions.Player.Dash.performed -= OnDashPerformed;
+        inputActions.Player.Inventory.performed -= OnInventoryPerformed;
         inputActions.Player.Disable();
     }
 
@@ -44,6 +48,24 @@ public class PlayerController : MonoBehaviour
         dashEndTime = Time.time + dashDuration;
         nextDashAllowedTime = Time.time + dashCooldown;
     }
+
+    private void OnInventoryPerformed(InputAction.CallbackContext ctx)
+    {
+        Inventory();
+    }
+
+    private void Inventory()
+    {
+        if (!inventoryManager._isOpen)
+        {
+            inventoryManager.OpenInventory();
+        }
+        else if (inventoryManager._isOpen)
+        {
+            inventoryManager.CloseInventory();
+        }
+    }
+
 
     private void Update()
     {
@@ -67,6 +89,16 @@ public class PlayerController : MonoBehaviour
         else
         {
             transform.Translate(move * moveSpeed * Time.deltaTime, Space.World);
+        }
+
+        Collider2D[] zombies = Physics2D.OverlapCircleAll(transform.position, 10f, LayerMask.GetMask("Zombie"));
+        if (zombies.Length > 0)
+        {
+            zombieNearby = true;
+        }
+        else
+        {
+            zombieNearby = false;
         }
     }
 
