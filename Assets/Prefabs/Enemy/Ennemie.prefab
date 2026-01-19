@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5129801099381902863}
   m_Layer: 6
   m_Name: Ennemie
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 1
+  maxInfection: 100
   detectionRange: 10
   moveSpeed: 2
   angleView: 30
@@ -56,6 +57,7 @@ MonoBehaviour:
   attackRange: 1
   damagePerHit: 10
   attackCooldown: 1
+  maxHealth: 1
   playerTransform: {fileID: 0}
   currentState: 0
 --- !u!212 &2197775522741872525

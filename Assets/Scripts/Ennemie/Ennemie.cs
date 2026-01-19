@@ -16,6 +16,10 @@ public class Ennemie : Entity
     [SerializeField] private int damagePerHit = 1;
     [SerializeField] private float attackCooldown = 1.0f;
 
+    [Header("Health Settings")]
+    [SerializeField] private int maxHealth = 30;
+    private int currentHealth;
+
     private float timer = 0.0f;
     private Vector2 centralView;
 
@@ -48,11 +52,40 @@ public class Ennemie : Entity
         agent.updateRotation = false;
         agent.updateUpAxis = false;
 
-        if (playerTransform == null)
+        if (playerTransform == null && GameObject.FindGameObjectsWithTag("Player").Length > 0)
             playerTransform = GameObject.FindGameObjectsWithTag("Player")[0].transform;
 
-        playerHealth = playerTransform.GetComponent<PlayerHealth>();
+        if (playerTransform != null)
+            playerHealth = playerTransform.GetComponent<PlayerHealth>();
     }
+    public void TakeDamage(int damageAmount)
+    {
+        currentHealth -= damageAmount;
+        Debug.Log("L'ennemi a pris " + damageAmount + " dégâts. Vie restante : " + currentHealth);
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        GetComponent<Collider2D>().enabled = false;
+
+        if (agent != null)
+        {
+            agent.isStopped = true;
+            agent.enabled = false;
+        }
+
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        if (sr != null) sr.color = Color.gray;
+        this.enabled = false;
+
+        Debug.Log("Ennemi neutralisé (Cadavre au sol)");
+    }
+
     private void OnValidate()
     {
         centralView = transform.right;

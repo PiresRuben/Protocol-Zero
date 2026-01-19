@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    [Header("Param�tres")]
+    [Header("Paramètres")]
     public float speed = 20f;
     public float lifeTime = 2f;
     public int damage = 10;
@@ -19,7 +19,6 @@ public class Bullet : MonoBehaviour
     {
         damage = weaponDamage;
         rb.linearVelocity = transform.right * speed;
-
         Destroy(gameObject, lifeTime);
     }
 
@@ -27,9 +26,10 @@ public class Bullet : MonoBehaviour
     {
         if (hitInfo.CompareTag("Player")) return;
 
-        if (hitInfo.CompareTag("Enemy"))
+        Ennemie enemy = hitInfo.GetComponent<Ennemie>();
+        if (enemy != null)
         {
-            Debug.Log("Ennemi touch� par balle !");
+            enemy.TakeDamage(damage);
         }
 
         if (hitEffect != null)
