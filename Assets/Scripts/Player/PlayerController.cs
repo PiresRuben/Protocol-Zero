@@ -1,10 +1,13 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+// Cette ligne force Unity à ajouter un Rigidbody2D si tu l'oublies
+[RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
     private PlayerInputActions inputActions;
-    private Camera mainCamera; // Référence à la caméra pour la conversion de position
+    private Camera mainCamera;
+    private Rigidbody2D rb; // Référence au moteur physique
 
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 5f;
@@ -16,27 +19,37 @@ public class PlayerController : MonoBehaviour
     private float dashEndTime;
     private float nextDashAllowedTime;
     private Vector2 lastMoveDir;
+    private Vector2 moveInput; // On stocke l'input ici pour l'utiliser dans FixedUpdate
 
+    [Header("Interaction")]
     public bool zombieNearby = false;
     public InventoryManager inventoryManager;
+
     private void Awake()
     {
         inputActions = new PlayerInputActions();
-        mainCamera = Camera.main; // On cache la caméra principale
+        mainCamera = Camera.main;
+        rb = GetComponent<Rigidbody2D>(); // On récupère le composant physique
     }
 
     private void OnEnable()
     {
-        inputActions.Player.Enable();
-        inputActions.Player.Dash.performed += OnDashPerformed;
-        inputActions.Player.Inventory.performed += OnInventoryPerformed;
+        if (inputActions != null)
+        {
+            inputActions.Player.Enable();
+            inputActions.Player.Dash.performed += OnDashPerformed;
+            inputActions.Player.Inventory.performed += OnInventoryPerformed;
+        }
     }
 
     private void OnDisable()
     {
-        inputActions.Player.Dash.performed -= OnDashPerformed;
-        inputActions.Player.Inventory.performed -= OnInventoryPerformed;
-        inputActions.Player.Disable();
+        if (inputActions != null)
+        {
+            inputActions.Player.Dash.performed -= OnDashPerformed;
+            inputActions.Player.Inventory.performed -= OnInventoryPerformed;
+            inputActions.Player.Disable();
+        }
     }
 
     private void OnDashPerformed(InputAction.CallbackContext ctx)
@@ -51,7 +64,10 @@ public class PlayerController : MonoBehaviour
 
     private void OnInventoryPerformed(InputAction.CallbackContext ctx)
     {
-        Inventory();
+        if (inventoryManager != null)
+        {
+            Inventory();
+        }
     }
 
     private void Inventory()
@@ -60,39 +76,59 @@ public class PlayerController : MonoBehaviour
         {
             inventoryManager.OpenInventory();
         }
-        else if (inventoryManager._isOpen)
+        else
         {
             inventoryManager.CloseInventory();
         }
     }
 
-
     private void Update()
     {
-        HandleMovement();
+        // Sécurité : Si les inputs n'existent pas, on arrête tout
+        if (inputActions == null) return;
+
+        // 1. Lecture des Inputs (Clavier/Souris)
+        moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+
+        if (moveInput != Vector2.zero)
+            lastMoveDir = moveInput.normalized;
+
         HandleRotation();
+        CheckZombies();
     }
 
-    private void HandleMovement()
+    // FixedUpdate est meilleur pour la physique (Rigidbody)
+    private void FixedUpdate()
     {
-        Vector2 move = inputActions.Player.Move.ReadValue<Vector2>();
-        if (move != Vector2.zero)
-            lastMoveDir = move.normalized;
+        HandleMovementPhysics();
+    }
 
-        if (isDashing)
+    private void HandleMovementPhysics()
+    {
+        // Calcul de la direction et de la vitesse
+        Vector2 direction = isDashing ? lastMoveDir : moveInput;
+        float currentSpeed = isDashing ? dashSpeed : moveSpeed;
+
+        // Déplacement physique qui respecte les murs
+        // On prend la position actuelle + la direction * vitesse * temps fixe
+        rb.MovePosition(rb.position + direction * currentSpeed * Time.fixedDeltaTime);
+
+        // Gestion de la fin du dash
+        if (isDashing && Time.time >= dashEndTime)
         {
-            transform.Translate(lastMoveDir * dashSpeed * Time.deltaTime, Space.World);
-
-            if (Time.time >= dashEndTime)
-                isDashing = false;
+            isDashing = false;
         }
-        else
-        {
-            transform.Translate(move * moveSpeed * Time.deltaTime, Space.World);
-        }
+    }
 
-        Collider2D[] zombies = Physics2D.OverlapCircleAll(transform.position, 10f, LayerMask.GetMask("Zombie"));
-        if (zombies.Length > 0)
+    private void CheckZombies()
+    {
+        // Attention : Assure-toi que tes ennemis sont sur le Layer "Enemy" (ou change le nom ici)
+        // J'ai mis "Default" en backup si tu n'as pas configuré de Layers, pour que ça marche quand même
+        int layerMask = LayerMask.GetMask("Enemy", "Default");
+
+        Collider2D hit = Physics2D.OverlapCircle(transform.position, 10f, layerMask);
+
+        if (hit != null && hit.CompareTag("Enemy"))
         {
             zombieNearby = true;
         }
@@ -104,11 +140,15 @@ public class PlayerController : MonoBehaviour
 
     private void HandleRotation()
     {
+        if (mainCamera == null) return;
+
         Vector2 mouseScreenPosition = Mouse.current.position.ReadValue();
         Vector3 mouseWorldPosition = mainCamera.ScreenToWorldPoint(mouseScreenPosition);
         mouseWorldPosition.z = 0f;
+
         Vector3 lookDirection = mouseWorldPosition - transform.position;
         float angle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
+
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 }

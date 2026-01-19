@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5742058542271914118}
   - component: {fileID: 4860105400470081385}
   - component: {fileID: 554992115205782094}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BulletPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -178,4 +178,4 @@ MonoBehaviour:
   speed: 20
   lifeTime: 2
   damage: 10
-  hitEffect: {fileID: 562576384274079544}
+  hitEffect: {fileID: 0}

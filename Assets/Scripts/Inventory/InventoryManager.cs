@@ -12,7 +12,6 @@ public class InventoryManager : MonoBehaviour
     public InventoryUI inventoryUI;
     public GameObject inventoryPanel;
 
-    // Cette liste sert maintenant de "file d'attente" ou de stockage temporaire
     public List<InventoryItemData> itemsToSpawn = new List<InventoryItemData>();
 
     public CharacterStatsUI displayStats;
@@ -31,6 +30,16 @@ public class InventoryManager : MonoBehaviour
 
     private void Start()
     {
+        // --- AJOUT DE SÉCURITÉ ---
+        // Si la référence au joueur est vide, on le cherche automatiquement
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+                player = playerObj.GetComponent<PlayerHealth>();
+        }
+        // -------------------------
+
         // On initialise la UI une seule fois au début
         inventoryUI.CreateGrid();
 
@@ -49,14 +58,16 @@ public class InventoryManager : MonoBehaviour
         _isOpen = true;
         inventoryPanel.SetActive(true);
 
-        displayStats.UpdateStats(
-            player.currentHealth,
-            player.maxHealth,
-            player.attack,
-            player.currentInfection,
-            player.fatigue
-        );
-
+        if (player != null)
+        {
+ /*           displayStats.UpdateStats(
+                player.currentHealth,
+                player.maxHealth,
+                //player.attack,
+                player.currentInfection
+                //player.fatigue
+            );*/
+        }
     }
 
     public void CloseInventory()

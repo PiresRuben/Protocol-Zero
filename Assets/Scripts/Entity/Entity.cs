@@ -1,63 +1,54 @@
 using UnityEngine;
 
-public class Entity : MonoBehaviour 
+public class Entity : MonoBehaviour
 {
+    [Header("Entity Stats")]
     public int maxHealth = 100;
-
     public int maxInfection = 100;
+
     public int currentHealth { get; protected set; }
     public int currentInfection { get; protected set; }
 
-
-    private void Die()
+    protected virtual void Awake()
     {
-        if (currentHealth <= 0) 
-        {
-            Debug.Log("ded");
-            //DestroyImmediate(this);
-        }
+        currentHealth = maxHealth;
+        currentInfection = 0;
     }
 
-    public void TakeDamage(int amount)
+    public virtual void TakeDamage(int amount)
     {
         SetHealth(currentHealth - amount);
     }
 
-
-    protected void Heal(int amount)
+    public virtual void TakeInfection(int amount)
     {
-        SetHealth(currentHealth + amount);
+        SetInfection(currentInfection + amount);
     }
 
     protected void SetHealth(int value)
     {
-        currentHealth = value;
+        currentHealth = Mathf.Clamp(value, 0, maxHealth);
 
-        if (currentHealth < 0) currentHealth = 0;
-        if (currentHealth > maxHealth) currentHealth = maxHealth;
-
-
-
-        if (currentHealth == 0) Die();
-    }
-    public void TakeInfection(int amount)
-    {
-        SetInfection(currentInfection + amount);
-    }
-    public void RemoveInfection(int amount)
-    {
-        SetInfection(currentInfection - amount);
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
     }
 
     protected void SetInfection(int value)
     {
-        currentInfection = value;
+        currentInfection = Mathf.Clamp(value, 0, maxInfection);
 
-        if (currentInfection < 0) currentInfection = 0;
-        if (currentInfection > maxInfection) currentInfection = maxInfection;
+        if (currentInfection >= maxInfection)
+        {
+            Die();
+        }
+    }
 
-
-
-        if (currentInfection == maxInfection) Die();
+    protected virtual void Die()
+    {
+        Debug.Log(gameObject.name + " est mort.");
+        // Par défaut on détruit l'objet, mais l'ennemi changera ça
+        // Destroy(gameObject); 
     }
 }

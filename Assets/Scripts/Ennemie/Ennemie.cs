@@ -16,13 +16,11 @@ public class Ennemie : Entity
     [SerializeField] private int damagePerHit = 1;
     [SerializeField] private float attackCooldown = 1.0f;
 
-    [Header("Health Settings")]
-    [SerializeField] private int maxHealth = 30;
-    private int currentHealth;
+    // --- SUPPRESSION DES DOUBLONS ICI ---
+    // maxHealth et currentHealth sont supprimés car ils viennent de Entity
 
     private float timer = 0.0f;
     private Vector2 centralView;
-
 
     private Quaternion targetRotation = Quaternion.identity;
 
@@ -30,7 +28,6 @@ public class Ennemie : Entity
     NavMeshAgent agent;
 
     [Header("Temporaire")]
-    //[SerializeField] private Transform fovObject; 
     [SerializeField] private Transform playerTransform;
     private PlayerHealth playerHealth = null;
 
@@ -41,35 +38,45 @@ public class Ennemie : Entity
         PlayerDetected,
         ChassingPlayer
     }
-    
+
     public State currentState = State.None;
 
-    private void Start() // Il sera a l'avenir attribuer par le gameManager
+    // On utilise override pour s'ajouter au Start de Entity
+    protected override void Awake()
     {
-        transform.rotation = Quaternion.identity;
+        base.Awake(); // Initialise la vie via Entity
+
+        // Si tu veux changer la vie max spécifique à ce zombie (ex: 30 PV)
+        // Tu le fais ici, en modifiant la variable du parent :
+        maxHealth = 30;
+        // On remet la vie actuelle au max après avoir changé le max
+        SetHealth(maxHealth);
+
         centralView = transform.right;
         agent = GetComponent<NavMeshAgent>();
-        agent.updateRotation = false;
-        agent.updateUpAxis = false;
+        if (agent != null)
+        {
+            agent.updateRotation = false;
+            agent.updateUpAxis = false;
+            agent.speed = moveSpeed; // On applique la vitesse au NavMesh
+        }
 
-        if (playerTransform == null && GameObject.FindGameObjectsWithTag("Player").Length > 0)
-            playerTransform = GameObject.FindGameObjectsWithTag("Player")[0].transform;
+        if (playerTransform == null)
+        {
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            if (players.Length > 0)
+                playerTransform = players[0].transform;
+        }
 
         if (playerTransform != null)
             playerHealth = playerTransform.GetComponent<PlayerHealth>();
     }
-    public void TakeDamage(int damageAmount)
-    {
-        currentHealth -= damageAmount;
-        Debug.Log("L'ennemi a pris " + damageAmount + " dégâts. Vie restante : " + currentHealth);
 
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
-    }
+    // SUPPRIMÉ : TakeDamage() 
+    // On utilise celle de Entity automatiquement.
 
-    private void Die()
+    // On remplace la fonction Die du parent par celle-ci
+    protected override void Die()
     {
         GetComponent<Collider2D>().enabled = false;
 
@@ -81,6 +88,7 @@ public class Ennemie : Entity
 
         SpriteRenderer sr = GetComponent<SpriteRenderer>();
         if (sr != null) sr.color = Color.gray;
+
         this.enabled = false;
 
         Debug.Log("Ennemi neutralisé (Cadavre au sol)");
@@ -93,37 +101,39 @@ public class Ennemie : Entity
 
     void Update()
     {
-        Debug.Log(transform.rotation.eulerAngles);
+        if (playerTransform == null) return;
+
+        // Debug.Log(transform.rotation.eulerAngles);
         directionToPlayer = Vector3.Normalize(playerTransform.position - transform.position);
+
         switch (currentState)
         {
             case State.None:
-                CheckNearbyPlayer(); 
+                CheckNearbyPlayer();
                 break;
 
-            case State.PlayerDetected: // Etape intermediaire necessaire pour plus tard
-                currentState = State.ChassingPlayer; 
+            case State.PlayerDetected:
+                currentState = State.ChassingPlayer;
                 break;
 
             case State.ChassingPlayer:
                 if (InRangeCheck(playerTransform.position, attackRange))
                 {
                     AttackPlayer();
-                    agent.SetDestination(transform.position);
+                    if (agent != null) agent.SetDestination(transform.position);
                 }
-
                 else
-                    agent.SetDestination(playerTransform.position);
+                {
+                    if (agent != null) agent.SetDestination(playerTransform.position);
+                }
                 break;
         }
-
     }
 
     private void CheckNearbyPlayer()
     {
         if (PlayerInFieldOfView())
         {
-            //Debug.Log("Ennemie Vu");
             currentState = State.PlayerDetected;
             return;
         }
@@ -133,27 +143,13 @@ public class Ennemie : Entity
     void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;
-
         Gizmos.DrawWireSphere(transform.position, detectionRange);
 
         Gizmos.color = Color.white;
-
         Gizmos.DrawWireSphere(transform.position, attackRange);
 
         Gizmos.color = Color.red;
-
         Gizmos.DrawRay(transform.position, centralView * distanceOfView);
-
-        //Gizmos.color = Color.black;
-
-        //Gizmos.DrawRay(transform.position, directionToPlayer * Vector3.Distance(transform.position, playerTransform.position));
-
-    }
-
-    private void Move(Vector3 destination)
-    {
-        Vector3 direction = Vector3.Normalize(destination - transform.position);
-        transform.Translate(direction * moveSpeed * Time.deltaTime);
     }
 
     private void AttackPlayer()
@@ -161,11 +157,12 @@ public class Ennemie : Entity
         timer += Time.deltaTime;
         if (timer >= attackCooldown)
         {
-            //Debug.Log("Joueur attaquer");
-            playerHealth.TakeDamage(damagePerHit);
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(damagePerHit);
+            }
             timer = 0.0f;
         }
-
     }
 
     private bool InRangeCheck(Vector3 inRange, float rangeValue)
@@ -176,12 +173,15 @@ public class Ennemie : Entity
     private bool PlayerInFieldOfView()
     {
         float angle = Vector3.Angle(directionToPlayer, centralView);
-        if ( angle <= angleView)
+        if (angle <= angleView)
         {
-            return true;
+            // Vérification de distance ajoutée pour éviter d'être vu à l'infini
+            if (Vector3.Distance(transform.position, playerTransform.position) <= distanceOfView)
+                return true;
         }
         return false;
     }
+
     private void HearNoise()
     {
         if (InRangeCheck(playerTransform.position, detectionRange))
@@ -189,14 +189,12 @@ public class Ennemie : Entity
             Vector3 directionToPlayer = (playerTransform.position - transform.position).normalized;
             targetRotation = Quaternion.LookRotation(directionToPlayer);
 
+            // Note: En 2D Top Down, LookRotation fonctionne mieux avec Vector3.forward comme axe
+            // Mais gardons ta logique actuelle si elle te convient visuellement
             Quaternion currentRot = Quaternion.LookRotation(centralView);
             Quaternion smoothedRot = Quaternion.Slerp(currentRot, targetRotation, rotationSpeed * Time.deltaTime);
 
             centralView = smoothedRot * Vector3.forward;
-
-
         }
     }
-
-
 }
