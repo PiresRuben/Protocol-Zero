@@ -2,8 +2,11 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour 
 {
-    public int maxHealth = 1;
+    public int maxHealth = 100;
+
+    public int maxInfection = 100;
     public int currentHealth { get; protected set; }
+    public int currentInfection { get; protected set; }
 
 
     private void Die()
@@ -20,6 +23,7 @@ public class Entity : MonoBehaviour
         SetHealth(currentHealth - amount);
     }
 
+
     protected void Heal(int amount)
     {
         SetHealth(currentHealth + amount);
@@ -35,5 +39,21 @@ public class Entity : MonoBehaviour
 
 
         if (currentHealth == 0) Die();
+    }
+    public void TakeInfection(int amount)
+    {
+        SetInfection(currentInfection + amount);
+    }
+
+    protected void SetInfection(int value)
+    {
+        currentInfection = value;
+
+        if (currentInfection < 0) currentInfection = 0;
+        if (currentInfection > maxInfection) currentInfection = maxInfection;
+
+
+
+        if (currentInfection == maxInfection) Die();
     }
 }

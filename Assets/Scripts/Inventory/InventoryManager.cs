@@ -53,7 +53,7 @@ public class InventoryManager : MonoBehaviour
             player.currentHealth,
             player.maxHealth,
             player.attack,
-            player.infection,
+            player.currentInfection,
             player.fatigue
         );
 
