@@ -5,19 +5,17 @@ using System.Collections.Generic;
 public class PlayerWeaponController : MonoBehaviour
 {
     [Header("Armes")]
-    public List<Weapon> weapons; // Liste de tes armes (enfants du player)
+    public List<Weapon> weapons;
     private Weapon currentWeapon;
     private int currentWeaponIndex = 0;
 
     private void Start()
     {
-        // Initialiser les armes
         InitializeWeapons();
     }
 
     void InitializeWeapons()
     {
-        // Désactiver toutes les armes sauf la première
         for (int i = 0; i < weapons.Count; i++)
         {
             if (weapons[i] != null)
@@ -36,7 +34,6 @@ public class PlayerWeaponController : MonoBehaviour
 
     void HandleWeaponSwitching()
     {
-        // Touches clavier (New Input System via Keyboard direct pour simplifier ici)
         if (Keyboard.current.digit1Key.wasPressedThisFrame) EquipWeapon(0);
         if (Keyboard.current.digit2Key.wasPressedThisFrame) EquipWeapon(1);
         if (Keyboard.current.digit3Key.wasPressedThisFrame) EquipWeapon(2);
@@ -47,11 +44,9 @@ public class PlayerWeaponController : MonoBehaviour
         if (index >= weapons.Count || index < 0) return;
         if (index == currentWeaponIndex) return;
 
-        // Désactiver l'arme actuelle
         if (currentWeapon != null)
             currentWeapon.gameObject.SetActive(false);
 
-        // Activer la nouvelle
         currentWeaponIndex = index;
         currentWeapon = weapons[index];
         currentWeapon.gameObject.SetActive(true);
@@ -61,7 +56,6 @@ public class PlayerWeaponController : MonoBehaviour
 
     void HandleShooting()
     {
-        // Si clic gauche maintenu (ou pressé selon l'arme, ici on gère le fireRate dans l'arme)
         if (Mouse.current.leftButton.isPressed)
         {
             if (currentWeapon != null)

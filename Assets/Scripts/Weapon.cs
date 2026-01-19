@@ -6,11 +6,10 @@ public abstract class Weapon : MonoBehaviour
     public string weaponName;
     public float damage = 10f;
     public float fireRate = 0.5f;
-    public float range = 10f; // Portée du tir
+    public float range = 10f;
 
     protected float nextFireTime;
 
-    // Méthode appelée par le PlayerWeaponController quand on clique
     public virtual void TryAttack()
     {
         if (Time.time >= nextFireTime)
@@ -19,7 +18,5 @@ public abstract class Weapon : MonoBehaviour
             nextFireTime = Time.time + fireRate;
         }
     }
-
-    // Logique spécifique (Tir de pistolet vs Coup de matraque)
     protected abstract void Attack();
 }
