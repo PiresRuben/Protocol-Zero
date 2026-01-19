@@ -44,6 +44,10 @@ public class Entity : MonoBehaviour
     {
         SetInfection(currentInfection + amount);
     }
+    public void RemoveInfection(int amount)
+    {
+        SetInfection(currentInfection - amount);
+    }
 
     protected void SetInfection(int value)
     {
