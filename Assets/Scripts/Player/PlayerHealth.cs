@@ -10,16 +10,14 @@ public class PlayerHealth : Entity
     [SerializeField] private Image healthBar;
     [SerializeField] private Image infectionBar;
 
-    // On utilise override pour ajouter notre logique au Start du parent
     protected override void Awake()
     {
-        base.Awake(); // Appelle le Awake de Entity (initialise la vie)
-        UpdateUI();   // Met à jour l'UI au lancement
+        base.Awake();
+        UpdateUI();
     }
 
     private void Update()
     {
-        // Test inputs
         if (Input.GetKeyDown(KeyCode.Space))
         {
             TakeDamage(10);
@@ -27,11 +25,10 @@ public class PlayerHealth : Entity
         }
     }
 
-    // On modifie la prise de dégâts pour ajouter l'UI
     public override void TakeDamage(int amount)
     {
-        base.TakeDamage(amount); // Fais les calculs de vie du parent
-        UpdateUI();              // Puis mets à jour l'UI
+        base.TakeDamage(amount);
+        UpdateUI();
     }
 
     public override void TakeInfection(int amount)
@@ -50,11 +47,8 @@ public class PlayerHealth : Entity
 
         OnHealthChanged?.Invoke((float)currentHealth / maxHealth);
     }
-
-    // Le joueur a peut-être une mort spéciale (Game Over screen)
     protected override void Die()
     {
         Debug.Log("GAME OVER - Le joueur est mort");
-        // Ici tu appelleras ton GameManager pour relancer le niveau
     }
 }

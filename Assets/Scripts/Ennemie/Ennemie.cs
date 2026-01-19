@@ -41,15 +41,11 @@ public class Ennemie : Entity
 
     public State currentState = State.None;
 
-    // On utilise override pour s'ajouter au Start de Entity
     protected override void Awake()
     {
-        base.Awake(); // Initialise la vie via Entity
+        base.Awake();
 
-        // Si tu veux changer la vie max spécifique à ce zombie (ex: 30 PV)
-        // Tu le fais ici, en modifiant la variable du parent :
         maxHealth = 30;
-        // On remet la vie actuelle au max après avoir changé le max
         SetHealth(maxHealth);
 
         centralView = transform.right;
@@ -58,7 +54,7 @@ public class Ennemie : Entity
         {
             agent.updateRotation = false;
             agent.updateUpAxis = false;
-            agent.speed = moveSpeed; // On applique la vitesse au NavMesh
+            agent.speed = moveSpeed;
         }
 
         if (playerTransform == null)
@@ -72,10 +68,6 @@ public class Ennemie : Entity
             playerHealth = playerTransform.GetComponent<PlayerHealth>();
     }
 
-    // SUPPRIMÉ : TakeDamage() 
-    // On utilise celle de Entity automatiquement.
-
-    // On remplace la fonction Die du parent par celle-ci
     protected override void Die()
     {
         GetComponent<Collider2D>().enabled = false;
@@ -103,7 +95,6 @@ public class Ennemie : Entity
     {
         if (playerTransform == null) return;
 
-        // Debug.Log(transform.rotation.eulerAngles);
         directionToPlayer = Vector3.Normalize(playerTransform.position - transform.position);
 
         switch (currentState)
@@ -175,7 +166,6 @@ public class Ennemie : Entity
         float angle = Vector3.Angle(directionToPlayer, centralView);
         if (angle <= angleView)
         {
-            // Vérification de distance ajoutée pour éviter d'être vu à l'infini
             if (Vector3.Distance(transform.position, playerTransform.position) <= distanceOfView)
                 return true;
         }
@@ -189,8 +179,6 @@ public class Ennemie : Entity
             Vector3 directionToPlayer = (playerTransform.position - transform.position).normalized;
             targetRotation = Quaternion.LookRotation(directionToPlayer);
 
-            // Note: En 2D Top Down, LookRotation fonctionne mieux avec Vector3.forward comme axe
-            // Mais gardons ta logique actuelle si elle te convient visuellement
             Quaternion currentRot = Quaternion.LookRotation(centralView);
             Quaternion smoothedRot = Quaternion.Slerp(currentRot, targetRotation, rotationSpeed * Time.deltaTime);
 

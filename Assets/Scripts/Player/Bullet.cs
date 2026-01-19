@@ -19,16 +19,14 @@ public class Bullet : MonoBehaviour
     {
         damage = weaponDamage;
         rb.linearVelocity = transform.right * speed;
-        Destroy(gameObject, lifeTime); // Sécurité : détruit au bout de 2s si elle touche rien
+        Destroy(gameObject, lifeTime);
     }
 
     void OnTriggerEnter2D(Collider2D hitInfo)
     {
-        // 1. Ignorer le joueur et les autres balles
         if (hitInfo.CompareTag("Player")) return;
         if (hitInfo.GetComponent<Bullet>() != null) return;
 
-        // 2. Bloc de sécurité : Si l'ennemi bugue, la balle ne doit pas rester bloquée
         try
         {
             Ennemie enemy = hitInfo.GetComponent<Ennemie>();
@@ -39,17 +37,14 @@ public class Bullet : MonoBehaviour
         }
         catch (System.Exception e)
         {
-            // Si l'ennemi a une erreur, on l'affiche mais on continue
             Debug.LogError("Erreur dans le script Ennemie lors de l'impact : " + e.Message);
         }
 
-        // 3. Effet visuel
         if (hitEffect != null)
         {
             Instantiate(hitEffect, transform.position, Quaternion.identity);
         }
 
-        // 4. DESTRUCTION FORCÉE
         Destroy(gameObject);
     }
 }
