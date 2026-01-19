@@ -1795,6 +1795,18 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 3844829278800427430, guid: 9e72bffef24b9204baf27533a3a6aea5, type: 3}
+      propertyPath: healthBar
+      value: 
+      objectReference: {fileID: 1011379372}
+    - target: {fileID: 3844829278800427430, guid: 9e72bffef24b9204baf27533a3a6aea5, type: 3}
+      propertyPath: infectionBar
+      value: 
+      objectReference: {fileID: 1427856503}
+    - target: {fileID: 3844829278800427430, guid: 9e72bffef24b9204baf27533a3a6aea5, type: 3}
+      propertyPath: maxInfection
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 6957066428993338655, guid: 9e72bffef24b9204baf27533a3a6aea5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -6.08
