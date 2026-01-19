@@ -7,7 +7,7 @@ using UnityEngine.AI;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.XR;
 
-public class Survivor : MonoBehaviour
+public class Survivor : Entity
 {
     [SerializeField]
     private PlayerInputActions inputActions;
