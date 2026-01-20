@@ -3,7 +3,7 @@ using UnityEngine;
 public class CollectableItems : MonoBehaviour
 {
     [Header("Item Data")]
-    public InventoryItemData linkedItem;
+    public InventoryItemData[] linkedItem;
     [SerializeField] private Sprite ItemSprite;
 
     [Header("Collectable Parameters")]
@@ -65,8 +65,12 @@ public class CollectableItems : MonoBehaviour
             {
                 if (inventoryManager != null)
                 {
-                    inventoryManager.AddItem(linkedItem);
-                    CollectableUI.enabled = false;  
+                    for (int i = 0; i < linkedItem.Length; i++)
+                    {
+                        inventoryManager.AddItem(linkedItem[i]);
+
+                    }
+                    CollectableUI.enabled = false;
                     Destroy(gameObject);
                 }
             }
