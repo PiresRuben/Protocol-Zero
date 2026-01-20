@@ -29,7 +29,7 @@ public class Bullet : MonoBehaviour
     {
         if (hitInfo.CompareTag("Player")) return;
         if (hitInfo.GetComponent<Bullet>() != null) return;
-        if (hitInfo.isTrigger && !hitInfo.CompareTag("Enemy")) return;
+        if (hitInfo.isTrigger && !hitInfo.CompareTag("Zombie")) return;
 
         Ennemie enemy = hitInfo.GetComponent<Ennemie>();
 
