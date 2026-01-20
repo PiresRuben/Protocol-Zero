@@ -10,10 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8bb825e38dc14cf428026a0bc70ab2c8, type: 3}
-  m_Name: Bandage
+  m_Name: Seringues
   m_EditorClassIdentifier: 
-  itemName: Bandage
-  itemIcon: {fileID: -2556243512109949567, guid: bc2dc2c7e2f239041b4ab8d1b1930265, type: 3}
+  itemName: Seingues
+  itemIcon: {fileID: -396309887504945837, guid: fda0699de06155644a4318de003852fc, type: 3}
   shape:
   - {x: 0, y: 0}
-  - {x: 0, y: 1}

@@ -10,10 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8bb825e38dc14cf428026a0bc70ab2c8, type: 3}
-  m_Name: Bandage
+  m_Name: Couteau
   m_EditorClassIdentifier: 
-  itemName: Bandage
-  itemIcon: {fileID: -2556243512109949567, guid: bc2dc2c7e2f239041b4ab8d1b1930265, type: 3}
+  itemName: Couteau
+  itemIcon: {fileID: -7690792068403419055, guid: 1b0d2a0f1b913084aa1acfb9dc3f51eb, type: 3}
   shape:
   - {x: 0, y: 0}
-  - {x: 0, y: 1}
