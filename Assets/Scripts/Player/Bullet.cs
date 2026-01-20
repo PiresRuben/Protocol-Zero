@@ -6,7 +6,10 @@ public class Bullet : MonoBehaviour
     public float speed = 20f;
     public float lifeTime = 2f;
     public int damage = 10;
-    public GameObject hitEffect;
+
+    [Header("Effets Visuels")]
+    public GameObject bloodEffect;
+    public GameObject wallEffect;
 
     private Rigidbody2D rb;
 
@@ -26,23 +29,32 @@ public class Bullet : MonoBehaviour
     {
         if (hitInfo.CompareTag("Player")) return;
         if (hitInfo.GetComponent<Bullet>() != null) return;
+        if (hitInfo.isTrigger && !hitInfo.CompareTag("Zombie")) return;
 
-        try
+        Ennemie enemy = hitInfo.GetComponent<Ennemie>();
+
+        if (enemy != null)
         {
-            Ennemie enemy = hitInfo.GetComponent<Ennemie>();
-            if (enemy != null)
+            try
             {
                 enemy.TakeDamage(damage);
             }
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError("Erreur dans le script Ennemie lors de l'impact : " + e.Message);
-        }
+            catch (System.Exception e)
+            {
+                Debug.LogError(e.Message);
+            }
 
-        if (hitEffect != null)
+            if (bloodEffect != null)
+            {
+                Instantiate(bloodEffect, transform.position, Quaternion.identity);
+            }
+        }
+        else
         {
-            Instantiate(hitEffect, transform.position, Quaternion.identity);
+            if (wallEffect != null)
+            {
+                Instantiate(wallEffect, transform.position, Quaternion.identity);
+            }
         }
 
         Destroy(gameObject);
