@@ -4,86 +4,56 @@ using UnityEngine.AI;
 
 public class Ennemie : Entity
 {
-    [Header("Stat")]
-    [SerializeField] private float detectionRange = 1.0f;
-    [SerializeField] private float moveSpeed = 0.3f;
-    [SerializeField] private float angleView = 30.0f;
+    [Header("Detection Stats")]
+    [SerializeField] private float detectionRange = 5.0f;
+    [SerializeField] private float angleView = 45.0f;
     [SerializeField] private float distanceOfView = 5.0f;
     [SerializeField] private float rotationSpeed = 5f;
 
-    [Header("Offensive Stat")]
-    [SerializeField] private float attackRange = 0.5f;
-    [SerializeField] private int damagePerHit = 1;
+    [Header("Offensive Stats")]
+    [SerializeField] private float attackRange = 1.0f;
+    [SerializeField] private int damagePerHit = 10;
     [SerializeField] private float attackCooldown = 1.0f;
 
-    // --- SUPPRESSION DES DOUBLONS ICI ---
-    // maxHealth et currentHealth sont supprimés car ils viennent de Entity
+    // --- NOUVEAU : Pour gérer la vision à travers les murs ---
+    [Header("Vision Settings")]
+    public LayerMask obstacleLayer; // Assigne le layer "Wall" ici dans l'inspecteur
+    private SpriteRenderer spriteRenderer;
+    // --------------------------------------------------------
 
     private float timer = 0.0f;
-    private Vector2 centralView;
-
+    private Vector3 centralView;
     private Quaternion targetRotation = Quaternion.identity;
+    private Vector3 directionToPlayer;
+    private NavMeshAgent agent;
 
-    Vector3 directionToPlayer;
-    NavMeshAgent agent;
-
-    [Header("Temporaire")]
+    [Header("References")]
     [SerializeField] private Transform playerTransform;
-    private PlayerHealth playerHealth = null;
+    private PlayerHealth playerHealthScript = null;
 
     [HideInInspector]
-    public enum State
-    {
-        None,
-        PlayerDetected,
-        ChassingPlayer
-    }
-
+    public enum State { None, PlayerDetected, ChassingPlayer }
     public State currentState = State.None;
 
-    protected override void Awake()
+    protected override void Awake() // On utilise Awake pour récupérer les composants
     {
         base.Awake();
-
-        maxHealth = 30;
-        SetHealth(maxHealth);
-
-        centralView = transform.right;
         agent = GetComponent<NavMeshAgent>();
-        if (agent != null)
-        {
-            agent.updateRotation = false;
-            agent.updateUpAxis = false;
-            agent.speed = moveSpeed;
-        }
+        agent.updateRotation = false;
+        agent.updateUpAxis = false;
+        centralView = transform.right;
+
+        // On récupère le SpriteRenderer pour pouvoir le cacher
+        spriteRenderer = GetComponent<SpriteRenderer>();
 
         if (playerTransform == null)
         {
-            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-            if (players.Length > 0)
-                playerTransform = players[0].transform;
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null) playerTransform = playerObj.transform;
         }
 
         if (playerTransform != null)
-            playerHealth = playerTransform.GetComponent<PlayerHealth>();
-    }
-
-    protected override void Die()
-    {
-        GetComponent<Collider2D>().enabled = false;
-
-        if (agent != null)
-        {
-            agent.isStopped = true;
-            agent.enabled = false;
-        }
-
-        SpriteRenderer sr = GetComponent<SpriteRenderer>();
-        if (sr != null) sr.color = Color.gray;
-
-        this.enabled = false;
-
-        Debug.Log("Ennemi neutralisé (Cadavre au sol)");
+            playerHealthScript = playerTransform.GetComponent<PlayerHealth>();
     }
 
     private void OnValidate()
@@ -95,52 +65,91 @@ public class Ennemie : Entity
     {
         if (playerTransform == null) return;
 
-        directionToPlayer = Vector3.Normalize(playerTransform.position - transform.position);
+        directionToPlayer = (playerTransform.position - transform.position).normalized;
+
+        // On gère la visibilité à chaque frame
+        HandleVisibility();
 
         switch (currentState)
         {
             case State.None:
                 CheckNearbyPlayer();
                 break;
-
             case State.PlayerDetected:
                 currentState = State.ChassingPlayer;
                 break;
-
             case State.ChassingPlayer:
-                if (InRangeCheck(playerTransform.position, attackRange))
+                float distance = Vector3.Distance(transform.position, playerTransform.position);
+                if (distance <= attackRange)
                 {
+                    agent.SetDestination(transform.position);
                     AttackPlayer();
-                    if (agent != null) agent.SetDestination(transform.position);
                 }
                 else
                 {
-                    if (agent != null) agent.SetDestination(playerTransform.position);
+                    agent.SetDestination(playerTransform.position);
                 }
+                RotateTowards(playerTransform.position);
                 break;
         }
+    }
+
+    // --- NOUVELLE FONCTION ---
+    private void HandleVisibility()
+    {
+        // On trace une ligne entre l'ennemi et le joueur
+        float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
+
+        // Raycast qui cherche SEULEMENT sur le layer "obstacleLayer" (les murs)
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleLayer);
+
+        if (hit.collider != null)
+        {
+            // SI on touche un mur avant le joueur -> On cache l'ennemi
+            spriteRenderer.enabled = false;
+        }
+        else
+        {
+            // SI pas de mur -> On laisse le Sprite Mask décider
+            // Le renderer doit être activé pour que le Mask Interaction fonctionne
+            spriteRenderer.enabled = true;
+        }
+    }
+    // -------------------------
+
+    protected override void Die()
+    {
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = false;
+
+        if (agent != null) { agent.isStopped = true; agent.enabled = false; }
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = Color.gray;
+            spriteRenderer.enabled = true; // On s'assure qu'on voit le cadavre même si caché par le script
+
+            // OPTIONNEL : Si tu veux voir les cadavres tout le temps, change le Mask Interaction ici
+            spriteRenderer.maskInteraction = SpriteMaskInteraction.None;
+        }
+
+        this.enabled = false;
+        Debug.Log("Ennemi neutralisé");
     }
 
     private void CheckNearbyPlayer()
     {
         if (PlayerInFieldOfView())
         {
-            currentState = State.PlayerDetected;
-            return;
+            // On vérifie AUSSI s'il y a un mur avant de détecter (pour l'IA)
+            float dist = Vector3.Distance(transform.position, playerTransform.position);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToPlayer, dist, obstacleLayer);
+
+            if (hit.collider == null) // Si pas de mur
+            {
+                currentState = State.PlayerDetected;
+            }
         }
-        HearNoise();
-    }
-
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position, detectionRange);
-
-        Gizmos.color = Color.white;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
-
-        Gizmos.color = Color.red;
-        Gizmos.DrawRay(transform.position, centralView * distanceOfView);
     }
 
     private void AttackPlayer()
@@ -148,23 +157,18 @@ public class Ennemie : Entity
         timer += Time.deltaTime;
         if (timer >= attackCooldown)
         {
-            if (playerHealth != null)
+            if (playerHealthScript != null)
             {
-                playerHealth.TakeDamage(damagePerHit);
+                playerHealthScript.TakeDamage(damagePerHit);
             }
             timer = 0.0f;
         }
     }
 
-    private bool InRangeCheck(Vector3 inRange, float rangeValue)
-    {
-        return Vector3.Distance(transform.position, inRange) <= rangeValue;
-    }
-
     private bool PlayerInFieldOfView()
     {
-        float angle = Vector3.Angle(directionToPlayer, centralView);
-        if (angle <= angleView)
+        float angle = Vector3.Angle(transform.right, directionToPlayer);
+        if (angle <= angleView / 2)
         {
             if (Vector3.Distance(transform.position, playerTransform.position) <= distanceOfView)
                 return true;
@@ -172,17 +176,16 @@ public class Ennemie : Entity
         return false;
     }
 
-    private void HearNoise()
+    private void RotateTowards(Vector3 target)
     {
-        if (InRangeCheck(playerTransform.position, detectionRange))
-        {
-            Vector3 directionToPlayer = (playerTransform.position - transform.position).normalized;
-            targetRotation = Quaternion.LookRotation(directionToPlayer);
+        Vector3 direction = (target - transform.position).normalized;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+    }
 
-            Quaternion currentRot = Quaternion.LookRotation(centralView);
-            Quaternion smoothedRot = Quaternion.Slerp(currentRot, targetRotation, rotationSpeed * Time.deltaTime);
-
-            centralView = smoothedRot * Vector3.forward;
-        }
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, detectionRange);
     }
 }
