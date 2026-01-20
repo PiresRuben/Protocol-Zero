@@ -5,7 +5,7 @@ public class Menu : MonoBehaviour
 {
 
     [SerializeField]
-    private int currentScene = 1;
+    private int startScene = 1;
 
     void Start()
     {
@@ -13,8 +13,14 @@ public class Menu : MonoBehaviour
     }
     public void StartButton()
     {
-        SceneManager.LoadScene(currentScene);
+        SceneManager.LoadScene(startScene);
         Debug.Log("Scene Loaded");
+    }
+
+    public void MenuButton()
+    {
+        SceneManager.LoadScene(0);
+        Debug.Log("Menu Loaded");
     }
 
     public void QuitButton()
