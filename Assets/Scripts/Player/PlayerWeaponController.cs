@@ -9,12 +9,9 @@ public class PlayerWeaponController : MonoBehaviour
     private Weapon currentWeapon;
     private int currentWeaponIndex = 0;
 
-    [Header("Audio")]
-    public AudioManager audioManager;
 
     private void Start()
     {
-        audioManager = AudioManager.GetInstance();
         InitializeWeapons();
     }
 
@@ -64,7 +61,7 @@ public class PlayerWeaponController : MonoBehaviour
         {
             if (currentWeapon != null)
             {
-                currentWeapon.TryAttack(audioManager);
+                currentWeapon.TryAttack();
             }
         }
     }

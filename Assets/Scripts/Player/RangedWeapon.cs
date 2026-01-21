@@ -13,8 +13,16 @@ public class RangedWeapon : Weapon
     public float shakeDuration = 0.1f;
     public float shakeMagnitude = 0.2f;
 
+    private AudioSource src;
+
+
+    private void Start()
+    {
+        src = GetComponent<AudioSource>();
+    }
     protected override void Attack()
     {
+        src.Play();
         if (CameraPlayer.instance != null)
         {
             CameraPlayer.instance.Shake(shakeDuration, shakeMagnitude);
