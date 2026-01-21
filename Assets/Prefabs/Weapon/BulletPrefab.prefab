@@ -176,7 +176,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 20
-  lifeTime: 2
   damage: 10
   bloodEffect: {fileID: 241948492509934917, guid: c0583452fa0232a41a49f76e9d671ad7, type: 3}
   wallEffect: {fileID: 241948492509934917, guid: 8ae88ac6273f2fe459312063ce7ff690, type: 3}

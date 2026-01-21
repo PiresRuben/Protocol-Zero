@@ -177,8 +177,6 @@ private void CheckNearbyPlayer()
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
 
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position, Vector3.forward * detectionRange);
 
     }
 }
