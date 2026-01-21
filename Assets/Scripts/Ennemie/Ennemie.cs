@@ -136,6 +136,7 @@ private void CheckNearbyPlayer()
         if (hit.collider == null) 
         {
             currentState = State.PlayerDetected;
+
         }
     }
 }
@@ -177,8 +178,7 @@ private void CheckNearbyPlayer()
         Gizmos.DrawWireSphere(transform.position, detectionRange);
 
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position, centralView * distanceOfView);
-
+        Gizmos.DrawLine(transform.position, Vector3.forward * detectionRange);
 
     }
 }

@@ -16762,6 +16762,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 359534401651156933, guid: 9c3ad07bfb434a04bb4c38029a68c833, type: 3}
+      propertyPath: m_Volume
+      value: 0.551
+      objectReference: {fileID: 0}
+    - target: {fileID: 359534401651156933, guid: 9c3ad07bfb434a04bb4c38029a68c833, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: 00126060940c7e04b900ef01f598adf4, type: 3}
     - target: {fileID: 539199876222702895, guid: 9c3ad07bfb434a04bb4c38029a68c833, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.1799505
@@ -16842,6 +16850,14 @@ PrefabInstance:
       propertyPath: m_Resource
       value: 
       objectReference: {fileID: 8300000, guid: 7ef6d170ca77b6748904b90c73d04ba6, type: 3}
+    - target: {fileID: 7793677619233214625, guid: 9c3ad07bfb434a04bb4c38029a68c833, type: 3}
+      propertyPath: m_Volume
+      value: 0.214
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793677619233214625, guid: 9c3ad07bfb434a04bb4c38029a68c833, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: 04a5db2fdd62bc543b2a3642d3bb363d, type: 3}
     - target: {fileID: 8650280338507386321, guid: 9c3ad07bfb434a04bb4c38029a68c833, type: 3}
       propertyPath: audioManager
       value: 
@@ -17876,7 +17892,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7922952829945299333, guid: 2cc1d96cc3cca914fb20ba7aaaa2d271, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.24
+      value: 1.42
       objectReference: {fileID: 0}
     - target: {fileID: 7922952829945299333, guid: 2cc1d96cc3cca914fb20ba7aaaa2d271, type: 3}
       propertyPath: m_LocalPosition.z

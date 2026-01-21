@@ -26,7 +26,6 @@ public class RangedWeapon : Weapon
 
     public override void Attack()
     {
-        src.Play();
         if (CameraPlayer.instance != null)
         {
             CameraPlayer.instance.Shake(shakeDuration, shakeMagnitude);
@@ -52,6 +51,7 @@ public class RangedWeapon : Weapon
         {
             ShootRaycast();
         }
+        src.Play();
     }
 
     void ShootSingleProjectile()

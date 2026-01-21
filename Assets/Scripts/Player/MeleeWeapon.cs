@@ -7,9 +7,18 @@ public class MeleeWeapon : Weapon
     public float attackRadius = 0.5f;
     public LayerMask enemyLayers;
 
+    private AudioSource src;
+
+    private void Start()
+    {
+        src = GetComponent<AudioSource>();
+    }
+
+
     public override void Attack()
     {
         Debug.Log($"Coup de {weaponName} !");
+        src.Play();
 
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, enemyLayers);
 
