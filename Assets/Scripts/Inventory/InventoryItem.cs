@@ -60,7 +60,74 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     // Drag & Drop handlers
     public void OnPointerDown(PointerEventData eventData)
     {
-        Debug.Log("Clic détecté sur l'objet !");
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            UseItem();
+        }
+    }
+
+    private void UseItem()
+    {
+        if (data == null) return;
+
+        Debug.Log("Utilisation de : " + data.itemName);
+
+        // SWITCH basé sur le nom (ou mieux, sur un Enum dans votre ScriptableObject)
+        switch (data.itemName)
+        {
+            case "Bandage":
+                ApplyHealing(10);
+                break;
+
+            case "Seringue":
+                ApplyInfection(20);
+                break;
+
+            default:
+                Debug.Log("Cet objet n'a pas de comportement spécifique.");
+                break;
+        }
+    }
+
+    private void ApplyHealing(int amount)
+    {
+        // On accède au joueur via le Manager ou un Singleton
+        PlayerHealth player = Object.FindObjectOfType<PlayerHealth>();
+        if (player != null)
+        {
+            player.Heal(amount);
+            Debug.Log("Soins appliqués !");
+            Consume(); 
+        }
+    }
+
+    private void ApplyInfection(int amount)
+    {
+        PlayerHealth player = Object.FindObjectOfType<PlayerHealth>();
+        if (player != null)
+        {
+            player.CureInfection(amount);
+            Debug.Log("Infection appliquée !");
+            Consume(); 
+        }
+    }
+
+    public void Consume()
+    {
+        InventoryGrid grid = Object.FindObjectOfType<InventoryGrid>();
+
+        if (grid != null)
+        {
+            grid.RemoveItem(this);
+
+            Debug.Log($"{data.itemName} a été consommé et retiré de l'inventaire.");
+
+            Destroy(gameObject);
+        }
+        else
+        {
+            Debug.LogError("Impossible de trouver InventoryGrid pour supprimer l'objet !");
+        }
     }
 
     public void OnBeginDrag(PointerEventData eventData)

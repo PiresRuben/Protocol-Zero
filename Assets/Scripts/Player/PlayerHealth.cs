@@ -36,6 +36,17 @@ public class PlayerHealth : Entity
         base.TakeInfection(amount);
         UpdateUI();
     }
+    public override void Heal(int amount)
+    {
+        base.Heal(amount);
+        UpdateUI();
+    }
+
+    public override void CureInfection(int amount)
+    {
+        base.CureInfection(amount);
+        UpdateUI();
+    }
 
     void UpdateUI()
     {

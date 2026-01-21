@@ -20,9 +20,19 @@ public class Entity : MonoBehaviour
         SetHealth(currentHealth - amount);
     }
 
+    public virtual void Heal(int amount)
+    {
+        SetHealth(currentHealth + amount);
+    }
+
     public virtual void TakeInfection(int amount)
     {
         SetInfection(currentInfection + amount);
+    }
+
+    public virtual void CureInfection(int amount)
+    {
+        SetInfection(currentInfection - amount);
     }
 
     protected void SetHealth(int value)

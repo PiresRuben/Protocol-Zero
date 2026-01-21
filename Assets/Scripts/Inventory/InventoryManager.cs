@@ -27,6 +27,10 @@ public class InventoryManager : MonoBehaviour
     // Référence à la coroutine en cours (si présente) pour pouvoir l'arrêter
     private Coroutine popupCoroutine;
 
+    private void Awake()
+    {
+        inventoryUI.CreateGrid();
+    }
     private void Start()
     {
         // --- AJOUT DE SÉCURITÉ ---
@@ -38,9 +42,6 @@ public class InventoryManager : MonoBehaviour
                 player = playerObj.GetComponent<PlayerHealth>();
         }
         // -------------------------
-        
-        // On initialise la UI une seule fois au début
-        inventoryUI.CreateGrid();
 
         AddBaseInventory();
         inventoryPanel.SetActive(false);
