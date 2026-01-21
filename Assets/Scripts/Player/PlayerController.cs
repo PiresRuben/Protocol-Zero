@@ -25,11 +25,19 @@ public class PlayerController : MonoBehaviour
     public bool zombieNearby = false;
     public InventoryManager inventoryManager;
 
+    [Header("Audio")]
+    public AudioManager audioManager;
+    private float internalAudioTimer = 0.0f;
+
     private void Awake()
     {
         inputActions = new PlayerInputActions();
         mainCamera = Camera.main;
         rb = GetComponent<Rigidbody2D>(); // On récupère le composant physique
+    }
+    private void Start()
+    {
+        audioManager = AudioManager.GetInstance();
     }
 
     private void OnEnable()
@@ -91,7 +99,16 @@ public class PlayerController : MonoBehaviour
         moveInput = inputActions.Player.Move.ReadValue<Vector2>();
 
         if (moveInput != Vector2.zero)
+        {
             lastMoveDir = moveInput.normalized;
+            internalAudioTimer += Time.deltaTime;
+            if (internalAudioTimer > 0.5f)
+            {
+                audioManager.PlayFootStep();
+                internalAudioTimer = 0;
+            }
+        }
+
 
         HandleRotation();
         CheckZombies();
