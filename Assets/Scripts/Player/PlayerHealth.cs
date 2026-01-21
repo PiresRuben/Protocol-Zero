@@ -7,8 +7,8 @@ public class PlayerHealth : Entity
     public event Action<float> OnHealthChanged;
 
     [Header("UI References")]
-    [SerializeField] private Image healthBar;
-    [SerializeField] private Image infectionBar;
+    [SerializeField] private Slider healthBar;
+    [SerializeField] private Slider infectionBar;
 
     protected override void Awake()
     {
@@ -40,10 +40,9 @@ public class PlayerHealth : Entity
     void UpdateUI()
     {
         if (healthBar != null)
-            healthBar.fillAmount = (float)currentHealth / maxHealth;
-
+            healthBar.value = currentHealth;
         if (infectionBar != null)
-            infectionBar.fillAmount = (float)currentInfection / maxInfection;
+            infectionBar.value = currentInfection;
 
         OnHealthChanged?.Invoke((float)currentHealth / maxHealth);
     }
