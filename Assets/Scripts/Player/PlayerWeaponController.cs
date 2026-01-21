@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 public class PlayerWeaponController : MonoBehaviour
 {
+    [Header("Réglages Visuels")]
+    public SpriteRenderer playerRenderer;
+
     [Header("Armes")]
     public List<Weapon> weapons;
     private Weapon currentWeapon;
@@ -11,6 +14,9 @@ public class PlayerWeaponController : MonoBehaviour
 
     private void Start()
     {
+        if (playerRenderer == null)
+            playerRenderer = GetComponent<SpriteRenderer>();
+
         InitializeWeapons();
     }
 
@@ -19,11 +25,15 @@ public class PlayerWeaponController : MonoBehaviour
         for (int i = 0; i < weapons.Count; i++)
         {
             if (weapons[i] != null)
-                weapons[i].gameObject.SetActive(i == 0);
+            {
+                weapons[i].gameObject.SetActive(false);
+            }
         }
 
         if (weapons.Count > 0)
-            currentWeapon = weapons[0];
+        {
+            EquipWeapon(0);
+        }
     }
 
     private void Update()
@@ -42,25 +52,40 @@ public class PlayerWeaponController : MonoBehaviour
     void EquipWeapon(int index)
     {
         if (index >= weapons.Count || index < 0) return;
-        if (index == currentWeaponIndex) return;
 
         if (currentWeapon != null)
             currentWeapon.gameObject.SetActive(false);
 
         currentWeaponIndex = index;
         currentWeapon = weapons[index];
+
         currentWeapon.gameObject.SetActive(true);
+
+        if (playerRenderer != null && currentWeapon.playerSpriteWithWeapon != null)
+        {
+            playerRenderer.sprite = currentWeapon.playerSpriteWithWeapon;
+        }
 
         Debug.Log($"Arme équipée : {currentWeapon.weaponName}");
     }
 
     void HandleShooting()
     {
-        if (Mouse.current.leftButton.isPressed)
+        if (currentWeapon != null)
         {
-            if (currentWeapon != null)
+            if (currentWeapon.isAutomatic)
             {
-                currentWeapon.TryAttack();
+                if (Mouse.current.leftButton.isPressed)
+                {
+                    currentWeapon.TryAttack();
+                }
+            }
+            else
+            {
+                if (Mouse.current.leftButton.wasPressedThisFrame)
+                {
+                    currentWeapon.TryAttack();
+                }
             }
         }
     }

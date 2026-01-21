@@ -15,11 +15,9 @@ public class Ennemie : Entity
     [SerializeField] private int damagePerHit = 10;
     [SerializeField] private float attackCooldown = 1.0f;
 
-    // --- NOUVEAU : Pour gérer la vision à travers les murs ---
     [Header("Vision Settings")]
-    public LayerMask obstacleLayer; // Assigne le layer "Wall" ici dans l'inspecteur
+    public LayerMask obstacleLayer;
     private SpriteRenderer spriteRenderer;
-    // --------------------------------------------------------
 
     private float timer = 0.0f;
     private Vector3 centralView;
@@ -35,7 +33,7 @@ public class Ennemie : Entity
     public enum State { None, PlayerDetected, ChassingPlayer }
     public State currentState = State.None;
 
-    protected override void Awake() // On utilise Awake pour récupérer les composants
+    protected override void Awake()
     {
         base.Awake();
         agent = GetComponent<NavMeshAgent>();
@@ -43,7 +41,6 @@ public class Ennemie : Entity
         agent.updateUpAxis = false;
         centralView = transform.right;
 
-        // On récupère le SpriteRenderer pour pouvoir le cacher
         spriteRenderer = GetComponent<SpriteRenderer>();
 
         if (playerTransform == null)
@@ -67,7 +64,6 @@ public class Ennemie : Entity
 
         directionToPlayer = (playerTransform.position - transform.position).normalized;
 
-        // On gère la visibilité à chaque frame
         HandleVisibility();
 
         switch (currentState)
@@ -94,28 +90,21 @@ public class Ennemie : Entity
         }
     }
 
-    // --- NOUVELLE FONCTION ---
     private void HandleVisibility()
     {
-        // On trace une ligne entre l'ennemi et le joueur
         float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
 
-        // Raycast qui cherche SEULEMENT sur le layer "obstacleLayer" (les murs)
         RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleLayer);
 
         if (hit.collider != null)
         {
-            // SI on touche un mur avant le joueur -> On cache l'ennemi
             spriteRenderer.enabled = false;
         }
         else
         {
-            // SI pas de mur -> On laisse le Sprite Mask décider
-            // Le renderer doit être activé pour que le Mask Interaction fonctionne
             spriteRenderer.enabled = true;
         }
     }
-    // -------------------------
 
     protected override void Die()
     {
@@ -127,9 +116,8 @@ public class Ennemie : Entity
         if (spriteRenderer != null)
         {
             spriteRenderer.color = Color.gray;
-            spriteRenderer.enabled = true; // On s'assure qu'on voit le cadavre même si caché par le script
+            spriteRenderer.enabled = true;
 
-            // OPTIONNEL : Si tu veux voir les cadavres tout le temps, change le Mask Interaction ici
             spriteRenderer.maskInteraction = SpriteMaskInteraction.None;
         }
 
@@ -141,11 +129,10 @@ public class Ennemie : Entity
     {
         if (PlayerInFieldOfView())
         {
-            // On vérifie AUSSI s'il y a un mur avant de détecter (pour l'IA)
             float dist = Vector3.Distance(transform.position, playerTransform.position);
             RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToPlayer, dist, obstacleLayer);
 
-            if (hit.collider == null) // Si pas de mur
+            if (hit.collider == null)
             {
                 currentState = State.PlayerDetected;
             }

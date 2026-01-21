@@ -2,21 +2,32 @@ using UnityEngine;
 
 public abstract class Weapon : MonoBehaviour
 {
-    [Header("Stats Arme")]
+    [Header("Weapon Stats")]
     public string weaponName;
-    public float damage = 10f;
-    public float fireRate = 0.5f;
-    public float range = 10f;
+    public int damage;
+    public float fireRate;
+    public float range;
+
+    public bool isAutomatic = false;
+
+    [Header("Visuals")]
+    public Sprite playerSpriteWithWeapon;
 
     protected float nextFireTime;
 
-    public virtual void TryAttack()
+    public abstract void Attack();
+
+    public bool CanAttack()
     {
-        if (Time.time >= nextFireTime)
+        return Time.time >= nextFireTime;
+    }
+
+    public void TryAttack()
+    {
+        if (CanAttack())
         {
-            Attack();
             nextFireTime = Time.time + fireRate;
+            Attack();
         }
     }
-    protected abstract void Attack();
 }
