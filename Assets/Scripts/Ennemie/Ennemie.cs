@@ -145,7 +145,7 @@ public class Ennemie : Entity
             float dist = Vector3.Distance(transform.position, playerTransform.position);
             RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToPlayer, dist, obstacleLayer);
 
-            if (hit.collider == null) // Si pas de mur
+            if (hit.collider == playerTransform) // Si pas de mur
             {
                 currentState = State.PlayerDetected;
             }
@@ -187,5 +187,10 @@ public class Ennemie : Entity
     {
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, centralView * distanceOfView);
+
+
     }
 }

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6838038829012059654}
   - component: {fileID: 7132861877127442465}
   - component: {fileID: 5926023096415372637}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Mur
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -163,7 +163,7 @@ GameObject:
   - component: {fileID: 869345420525446770}
   - component: {fileID: 770311962280680433}
   - component: {fileID: 7336609210630540596}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Mur (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -311,7 +311,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2550670483475714558}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: MurAssemble
   m_TagString: Untagged
   m_Icon: {fileID: 0}

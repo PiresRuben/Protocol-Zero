@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class AudioManager : MonoBehaviour
 {
@@ -7,6 +8,8 @@ public class AudioManager : MonoBehaviour
 
     public AudioSource src;
 
+    public AudioClip audioShoot;
+    public AudioClip ambientSound;
     public List<AudioClip> footSteps;
 
     private AudioClip lastFootClip;
@@ -45,6 +48,12 @@ public class AudioManager : MonoBehaviour
         if (currentAudio == lastFootClip) currentAudio = footSteps[Random.Range(0, footSteps.Count)];  // Pour reduire les chance d'avoir deux fois le mm audio
         lastFootClip = currentAudio;
         src.clip = currentAudio;
+        src.Play();
+    }
+
+    public void PlayShoot()
+    {
+        src.clip = audioShoot;
         src.Play();
     }
 }

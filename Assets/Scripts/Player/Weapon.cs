@@ -10,10 +10,11 @@ public abstract class Weapon : MonoBehaviour
 
     protected float nextFireTime;
 
-    public virtual void TryAttack()
+    public virtual void TryAttack(AudioManager audioManager)
     {
         if (Time.time >= nextFireTime)
         {
+            audioManager.PlayShoot();
             Attack();
             nextFireTime = Time.time + fireRate;
         }
