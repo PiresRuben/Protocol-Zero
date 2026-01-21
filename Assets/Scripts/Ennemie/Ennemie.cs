@@ -172,7 +172,7 @@ private void CheckNearbyPlayer()
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
     }
 
-    void OnDrawGizmos()
+    void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
