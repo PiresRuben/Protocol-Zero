@@ -7,8 +7,7 @@ public class InventoryManager : MonoBehaviour
 {
     public InventoryGrid grid;
     public GameObject itemPrefab;
-    public InventoryItemData testItemData;
-    public InventoryItemData testItemData2;
+    public InventoryItemData[] baseItem;
     public InventoryUI inventoryUI;
     public GameObject inventoryPanel;
 
@@ -39,17 +38,11 @@ public class InventoryManager : MonoBehaviour
                 player = playerObj.GetComponent<PlayerHealth>();
         }
         // -------------------------
-
+        
         // On initialise la UI une seule fois au début
         inventoryUI.CreateGrid();
 
-        // Exemple : On ajoute quelques items de test
-        for (int i = 0; i < 5; i++)
-        {
-            AddItem(testItemData);
-            AddItem(testItemData2);
-        }
-
+        AddBaseInventory();
         inventoryPanel.SetActive(false);
     }
 
@@ -70,6 +63,13 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+    public void AddBaseInventory()
+    {
+        for (int i = 0; i < baseItem.Length; i++)
+        {
+            AddItem(baseItem[i]);
+        }
+    }
     public void CloseInventory()
     {
         _isOpen = false;
