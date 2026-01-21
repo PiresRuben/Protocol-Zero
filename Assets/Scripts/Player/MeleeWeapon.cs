@@ -7,7 +7,7 @@ public class MeleeWeapon : Weapon
     public float attackRadius = 0.5f;
     public LayerMask enemyLayers;
 
-    protected override void Attack()
+    public override void Attack()
     {
         Debug.Log($"Coup de {weaponName} !");
 
@@ -17,6 +17,11 @@ public class MeleeWeapon : Weapon
         {
             if (enemy.CompareTag("Enemy"))
             {
+                Ennemie ennemieScript = enemy.GetComponent<Ennemie>();
+                if (ennemieScript != null)
+                {
+                    ennemieScript.TakeDamage(damage);
+                }
                 Debug.Log("Ennemi frappé : " + enemy.name);
             }
         }
@@ -24,9 +29,7 @@ public class MeleeWeapon : Weapon
 
     void OnDrawGizmosSelected()
     {
-        if (attackPoint == null)
-            return;
-
+        if (attackPoint == null) return;
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
     }

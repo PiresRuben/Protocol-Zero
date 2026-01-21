@@ -4,7 +4,6 @@ public class Bullet : MonoBehaviour
 {
     [Header("Paramètres")]
     public float speed = 20f;
-    public float lifeTime = 2f;
     public int damage = 10;
 
     [Header("Effets Visuels")]
@@ -18,17 +17,21 @@ public class Bullet : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public void Setup(int weaponDamage)
+    public void Setup(int weaponDamage, float weaponRange)
     {
         damage = weaponDamage;
         rb.linearVelocity = transform.right * speed;
-        Destroy(gameObject, lifeTime);
+
+        float calculatedLifeTime = weaponRange / speed;
+
+        Destroy(gameObject, calculatedLifeTime);
     }
 
     void OnTriggerEnter2D(Collider2D hitInfo)
     {
         if (hitInfo.CompareTag("Player")) return;
         if (hitInfo.GetComponent<Bullet>() != null) return;
+
         if (hitInfo.isTrigger && !hitInfo.CompareTag("Zombie")) return;
 
         Ennemie enemy = hitInfo.GetComponent<Ennemie>();
