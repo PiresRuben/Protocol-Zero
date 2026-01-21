@@ -12,7 +12,7 @@ public class Menu : MonoBehaviour
 
     void Start()
     {
-        // get scene from database
+        volumeSlider.value = AudioListener.volume;
     }
     public void StartButton()
     {
