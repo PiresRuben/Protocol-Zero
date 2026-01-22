@@ -475,6 +475,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scoreRef: {fileID: 85890451}
   survivorNbrRef: {fileID: 590003284}
+  killNbrRef: {fileID: 1696890631}
   passeur: {fileID: 11400000, guid: dce022a7c5bdc2c4e99655f8e31bb2c7, type: 2}
 --- !u!1 &427525311
 GameObject:

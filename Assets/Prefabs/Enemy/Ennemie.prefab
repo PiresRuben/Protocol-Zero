@@ -55,7 +55,7 @@ MonoBehaviour:
   distanceOfView: 6.33
   rotationSpeed: 20
   attackRange: 1
-  damagePerHit: 10
+  damagePerHit: 30
   attackCooldown: 1
   obstacleLayer:
     serializedVersion: 2

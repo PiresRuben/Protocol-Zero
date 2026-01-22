@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
 
     public PassValue passeur;
 
+    private int nbrKill;
+
     private float nbrSurvivorSave = 0;
     public static GameManager GetInstance()
     {
@@ -51,6 +53,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("Tout les ennemie sont mort");
             extractArea.canExtract = true;
+            nbrKill++;
         }
     }
     public void SurvivorDying()
@@ -63,5 +66,6 @@ public class GameManager : MonoBehaviour
     {
         passeur.nbrSurvivant = nbrSurvivor;
         passeur.score = score;
+        passeur.nbrKill = nbrKill;
     }
 }

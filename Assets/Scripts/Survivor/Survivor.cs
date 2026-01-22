@@ -135,7 +135,7 @@ public class Survivor : Entity
             int roll = UnityEngine.Random.Range(1, 101);
             if (roll <= infectionChance && !isDead)
             {
-                Instantiate(zombiePrefab, transform.position, Quaternion.identity);
+                Instantiate(zombiePrefab, transform.position, transform.rotation);
                 DestroyImmediate(gameObject);
             }
             else
@@ -221,7 +221,7 @@ public class Survivor : Entity
     protected override void Die()
     {
         Debug.Log("Un survivant est mort");
-
+        isDead = true;
         GameManager gameManager = GameManager.GetInstance();
         gameManager.SurvivorDying();
     }

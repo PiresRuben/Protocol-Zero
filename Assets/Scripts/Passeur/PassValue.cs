@@ -6,4 +6,5 @@ public class PassValue : ScriptableObject
 
     public float nbrSurvivant = 0;
     public int score = 0;
+    public int nbrKill;
 }

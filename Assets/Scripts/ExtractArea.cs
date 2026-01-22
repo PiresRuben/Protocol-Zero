@@ -14,7 +14,7 @@ public class ExtractArea : MonoBehaviour
     {
         if (other.CompareTag("Player") && questComplete  && canExtract)
         {
-            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 20);
+            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 10);
             GameManager gameManager = GameManager.GetInstance();
 
 
