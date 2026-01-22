@@ -16,6 +16,8 @@ public class Survivor : Entity
     [SerializeField]
     private GameObject zombiePrefab;
     [SerializeField]
+    private InventoryManager inventoryManager;
+    [SerializeField]
     private float interactionRange;
     [SerializeField]
     private float detectorRange = 5.0f;
@@ -38,6 +40,8 @@ public class Survivor : Entity
     [SerializeField, Range(0,100)]
     private int infectionChance = 20; // percentage chance of infection upon interaction
 
+
+    private bool canCure;
     public enum SurvivorState
     {
         Stop,
@@ -127,16 +131,36 @@ public class Survivor : Entity
     {
         if (Vector3.Distance(player.transform.position, transform.position) <= interactionRange)
         {
+            Debug.Log("testsetset");
             int roll = UnityEngine.Random.Range(1, 101);
-            if (roll <= infectionChance && !isDead)
+
+            var seringue = inventoryManager.inventoryItems
+            .FirstOrDefault(item => item.data.itemName == "Seringue");
+
+            Debug.Log(seringue);
+
+            if (seringue != null)
             {
-                Instantiate(zombiePrefab, transform.position, Quaternion.identity);
-                DestroyImmediate(gameObject);
+                canCure = true;
+                seringue.Consume();
+                seringue = null;
             }
-            else
+            
+            if (canCure && !isDead)
             {
-                Debug.Log("Survivor cured!");
-                isCured = true;
+                if (roll <= infectionChance)
+                {
+                    Debug.Log("blud is dead");
+                    Instantiate(zombiePrefab, transform.position, Quaternion.identity);
+                    DestroyImmediate(gameObject);
+                }
+                else
+                {
+                    Debug.Log("Survivor cured!");
+                    isCured = true;
+
+                }
+                canCure = false;
             }
         }
     }

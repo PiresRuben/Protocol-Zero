@@ -2828,6 +2828,10 @@ PrefabInstance:
       propertyPath: infectionChance
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2997627092720593302, guid: 4ff70d26166fbf04badbd981c4c41f24, type: 3}
+      propertyPath: inventoryManager
+      value: 
+      objectReference: {fileID: 2138140863}
     - target: {fileID: 3525607985938443639, guid: 4ff70d26166fbf04badbd981c4c41f24, type: 3}
       propertyPath: m_Name
       value: Survivor
@@ -21062,6 +21066,7 @@ MonoBehaviour:
   itemName: {fileID: 1402070046}
   amountNewItem: {fileID: 948383490}
   itemSprite: {fileID: 993518214}
+  inventoryItems: []
 --- !u!4 &2138140864
 Transform:
   m_ObjectHideFlags: 0

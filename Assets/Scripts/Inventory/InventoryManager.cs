@@ -24,9 +24,16 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI amountNewItem;
     [SerializeField] private GameObject itemSprite;
 
+    public List<InventoryItem> inventoryItems;
+
     // Référence à la coroutine en cours (si présente) pour pouvoir l'arrêter
     private Coroutine popupCoroutine;
 
+
+    private void Update()
+    {
+        check();
+    }
     private void Awake()
     {
         inventoryUI.CreateGrid();
@@ -123,6 +130,18 @@ public class InventoryManager : MonoBehaviour
         popupCoroutine = null;
     }
 
+    public void check()
+    {
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            for (int i = 0; i < inventoryItems.Count; i++)
+            {
+                Debug.Log(inventoryItems[i].data.name);
+            }
+        }
+    }
+
+
     private void SpawnItemInGrid(InventoryItemData data, Vector2Int pos)
     {
         RectTransform cell = inventoryUI.cells[pos.x, pos.y];
@@ -135,6 +154,8 @@ public class InventoryManager : MonoBehaviour
         RectTransform rect = obj.GetComponent<RectTransform>();
         rect.anchoredPosition = Vector2.zero;
 
+        inventoryItems.Add(item);
         grid.PlaceItem(item, pos);
+        
     }
 }
