@@ -25,7 +25,7 @@ public class Survivor : Entity
 
     [SerializeField]
     private LayerMask zombieLayer;
-    private Collider2D[] detectedZombies;
+    public Collider2D[] detectedZombies;
     private PlayerController playerController;
 
     [SerializeField]
@@ -109,6 +109,7 @@ public class Survivor : Entity
         UpdateZones();
 
         currentState = DetermineState(); 
+        Debug.Log("Survivor State: " + currentState.ToString());
         switch (currentState)
         {
             case SurvivorState.RunAway:

@@ -149,6 +149,7 @@ private void CheckNearbyPlayer()
             if (playerHealthScript != null)
             {
                 playerHealthScript.TakeDamage(damagePerHit);
+                playerHealthScript.TakeInfection(damagePerHit / 2);
             }
             timer = 0.0f;
         }

@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     [Header("Interaction")]
     public bool zombieNearby = false;
     public InventoryManager inventoryManager;
+    public LayerMask zombieLayer;
 
     [Header("Audio")]
     public AudioManager audioManager;
@@ -141,10 +142,8 @@ public class PlayerController : MonoBehaviour
     {
         // Attention : Assure-toi que tes ennemis sont sur le Layer "Enemy" (ou change le nom ici)
         // J'ai mis "Default" en backup si tu n'as pas configuré de Layers, pour que ça marche quand même
-        int layerMask = LayerMask.GetMask("Enemy", "Default");
 
-        Collider2D hit = Physics2D.OverlapCircle(transform.position, 10f, layerMask);
-
+        Collider2D hit = Physics2D.OverlapCircle(transform.position, 3f, zombieLayer);
         if (hit != null && hit.CompareTag("Enemy"))
         {
             zombieNearby = true;

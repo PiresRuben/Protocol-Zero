@@ -88,7 +88,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
+  m_MaskInteraction: 1
   m_SpriteSortPoint: 0
 --- !u!114 &2997627092720593302
 MonoBehaviour:
@@ -105,15 +105,17 @@ MonoBehaviour:
   maxHealth: 100
   maxInfection: 100
   player: {fileID: 0}
-  zombiePrefab: {fileID: 0}
-  interactionRange: 0
-  detectorRange: 1.25
+  zombiePrefab: {fileID: 3738026839243084847, guid: 2cc1d96cc3cca914fb20ba7aaaa2d271, type: 3}
+  interactionRange: 1.5
+  detectorRange: 5
   zombieLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   zoneLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 32768
+  zones: []
+  currentZone: {fileID: 0}
   infectionChance: 20
 --- !u!195 &3657169525233855121
 NavMeshAgent:

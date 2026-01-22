@@ -32,7 +32,7 @@ public class Bullet : MonoBehaviour
         if (hitInfo.CompareTag("Player")) return;
         if (hitInfo.GetComponent<Bullet>() != null) return;
 
-        if (hitInfo.isTrigger && (!hitInfo.CompareTag("Zombie") || !hitInfo.CompareTag("Survivant"))) return;
+        if (hitInfo.isTrigger && (!hitInfo.CompareTag("Enemy") || !hitInfo.CompareTag("Survivant"))) return;
 
         Entity enemy = hitInfo.GetComponent<Entity>();
 

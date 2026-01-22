@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : Entity
 {
@@ -14,15 +15,6 @@ public class PlayerHealth : Entity
     {
         base.Awake();
         UpdateUI();
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            TakeDamage(10);
-            TakeInfection(5);
-        }
     }
 
     public override void TakeDamage(int amount)
@@ -60,5 +52,6 @@ public class PlayerHealth : Entity
     protected override void Die()
     {
         Debug.Log("GAME OVER - Le joueur est mort");
+        SceneManager.LoadScene(2);
     }
 }

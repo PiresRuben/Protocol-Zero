@@ -17,12 +17,14 @@ public class Menu : MonoBehaviour
     public void StartButton()
     {
         SceneManager.LoadScene(startScene);
+        Time.timeScale = 1f;
         Debug.Log("Scene Loaded");
     }
 
     public void MenuButton()
     {
         SceneManager.LoadScene(0);
+        Time.timeScale = 1f;
         Debug.Log("Menu Loaded");
     }
 
