@@ -109,7 +109,6 @@ public class Survivor : Entity
         UpdateZones();
 
         currentState = DetermineState(); 
-        Debug.Log("Survivor State: " + currentState.ToString());
         switch (currentState)
         {
             case SurvivorState.RunAway:

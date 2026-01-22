@@ -12,7 +12,8 @@ public class Menu : MonoBehaviour
 
     void Start()
     {
-        volumeSlider.value = AudioListener.volume;
+        if (volumeSlider != null)
+            volumeSlider.value = AudioListener.volume;
     }
     public void StartButton()
     {

@@ -111,11 +111,10 @@ MonoBehaviour:
   zombieLayer:
     serializedVersion: 2
     m_Bits: 64
+  detectedZombies: []
   zoneLayer:
     serializedVersion: 2
     m_Bits: 32768
-  zones: []
-  currentZone: {fileID: 0}
   infectionChance: 20
 --- !u!195 &3657169525233855121
 NavMeshAgent:
@@ -173,7 +172,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.3305903, y: 0.014373302}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -183,5 +182,5 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 3.4243202, y: 2.6577358}
   m_EdgeRadius: 0
