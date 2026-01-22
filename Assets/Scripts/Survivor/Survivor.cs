@@ -128,7 +128,7 @@ public class Survivor : Entity
         if (Vector3.Distance(player.transform.position, transform.position) <= interactionRange)
         {
             int roll = UnityEngine.Random.Range(1, 101);
-            if (roll <= infectionChance)
+            if (roll <= infectionChance && !isDead)
             {
                 Instantiate(zombiePrefab, transform.position, Quaternion.identity);
                 DestroyImmediate(gameObject);
