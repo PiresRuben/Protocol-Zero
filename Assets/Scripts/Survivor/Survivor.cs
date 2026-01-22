@@ -48,7 +48,7 @@ public class Survivor : Entity
     private SurvivorState currentState;
     private SurvivorState DetermineState()
     {
-        if (isCured)
+        if (isCured && !isDead)
         {
             detectedZombies = Physics2D.OverlapCircleAll(transform.position, detectorRange, zombieLayer);
             if (detectedZombies.Length >= 1 && playerController.zombieNearby)
@@ -64,12 +64,13 @@ public class Survivor : Entity
                         zones.RemoveAt(0);
                         UpdateTargetZone();
                     }
+
                     return SurvivorState.Stop;
                 }
-                else if ( currentState == SurvivorState.RunAway)
+                else if (currentState == SurvivorState.RunAway)
                 {
                     return SurvivorState.RunAway;
-                }                
+                }
                 else
                 {
                     return SurvivorState.Stop;

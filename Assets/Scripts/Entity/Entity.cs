@@ -8,6 +8,7 @@ public class Entity : MonoBehaviour
 
     public int currentHealth { get; protected set; }
     public int currentInfection { get; protected set; }
+    public bool isDead = false;
 
     protected virtual void Awake()
     {
@@ -57,6 +58,7 @@ public class Entity : MonoBehaviour
 
     protected virtual void Die()
     {
+        isDead = true;
         Debug.Log(gameObject.name + " est mort.");
         // Par défaut on détruit l'objet, mais l'ennemi changera ça
         // Destroy(gameObject); 
