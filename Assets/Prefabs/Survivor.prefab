@@ -104,10 +104,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   maxInfection: 100
+  isDead: 0
   player: {fileID: 0}
   zombiePrefab: {fileID: 3738026839243084847, guid: 2cc1d96cc3cca914fb20ba7aaaa2d271, type: 3}
+  inventoryManager: {fileID: 0}
   interactionRange: 1.5
   detectorRange: 5
+  isCured: 0
   zombieLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -116,6 +119,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 32768
   infectionChance: 20
+  playerTransform: {fileID: 0}
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!195 &3657169525233855121
 NavMeshAgent:
   m_ObjectHideFlags: 0

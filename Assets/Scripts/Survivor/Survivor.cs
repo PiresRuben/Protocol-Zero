@@ -23,6 +23,7 @@ public class Survivor : Entity
     private float detectorRange = 5.0f;
 
     public bool isCured = false;
+    private Vector3 directionToPlayer;
     NavMeshAgent agent;
 
     [SerializeField]
@@ -40,6 +41,12 @@ public class Survivor : Entity
     [SerializeField, Range(0,100)]
     private int infectionChance = 20; // percentage chance of infection upon interaction
 
+    [Header("References")]
+    [SerializeField] private Transform playerTransform;
+
+    [Header("Vision Settings")]
+    public LayerMask obstacleLayer;
+    private SpriteRenderer spriteRenderer;
 
 
     private bool canCure;
@@ -96,6 +103,19 @@ public class Survivor : Entity
         }
     }
 
+    protected override void Awake()
+    {
+        base.Awake();
+
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if (playerTransform == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null) playerTransform = playerObj.transform;
+        }
+    }
+
     private void Start()
     {
         inputActions = new PlayerInputActions();
@@ -112,6 +132,13 @@ public class Survivor : Entity
     }
     private void Update()
     {
+        if (playerTransform != null)
+        {
+            directionToPlayer = (playerTransform.position - transform.position).normalized;
+        }
+
+        HandleVisibility();
+
         UpdateZones();
 
         currentState = DetermineState(); 
@@ -143,6 +170,22 @@ public class Survivor : Entity
                 Debug.Log("Survivor cured!");
                 isCured = true;
             }
+        }
+    }
+
+    private void HandleVisibility()
+    {
+        float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
+
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleLayer);
+
+        if (hit.collider != null)
+        {
+            spriteRenderer.enabled = false;
+        }
+        else
+        {
+            spriteRenderer.enabled = true;
         }
     }
 

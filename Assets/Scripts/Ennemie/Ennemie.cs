@@ -122,7 +122,7 @@ public class Ennemie : Entity
         }
 
         this.enabled = false;
-        Debug.Log("Ennemi neutralis�");
+        Debug.Log("Ennemi neutralisé");
 
         GameManager gameManager = GameManager.GetInstance();
         gameManager.EnnemieDying();
