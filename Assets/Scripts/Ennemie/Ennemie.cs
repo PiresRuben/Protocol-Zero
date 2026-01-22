@@ -123,6 +123,9 @@ public class Ennemie : Entity
 
         this.enabled = false;
         Debug.Log("Ennemi neutralis�");
+
+        GameManager gameManager = GameManager.GetInstance();
+        gameManager.EnnemieDying();
     }
 
 private void CheckNearbyPlayer()

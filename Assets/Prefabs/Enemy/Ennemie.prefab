@@ -49,8 +49,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 30
   maxInfection: 100
+  isDead: 0
   detectionRange: 10
-  angleView: 30
+  angleView: 90
   distanceOfView: 6.33
   rotationSpeed: 20
   attackRange: 1

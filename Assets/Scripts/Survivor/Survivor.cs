@@ -22,7 +22,7 @@ public class Survivor : Entity
     [SerializeField]
     private float detectorRange = 5.0f;
 
-    private bool isCured = false;
+    public bool isCured = false;
     NavMeshAgent agent;
 
     [SerializeField]
@@ -39,6 +39,7 @@ public class Survivor : Entity
 
     [SerializeField, Range(0,100)]
     private int infectionChance = 20; // percentage chance of infection upon interaction
+
 
 
     private bool canCure;
@@ -128,39 +129,19 @@ public class Survivor : Entity
         }
     }
     public void InjectSereum(InputAction.CallbackContext ctx)
-    {
+    { 
         if (Vector3.Distance(player.transform.position, transform.position) <= interactionRange)
         {
-            Debug.Log("testsetset");
             int roll = UnityEngine.Random.Range(1, 101);
-
-            var seringue = inventoryManager.inventoryItems
-            .FirstOrDefault(item => item.data.itemName == "Seringue");
-
-            Debug.Log(seringue);
-
-            if (seringue != null)
+            if (roll <= infectionChance && !isDead)
             {
-                canCure = true;
-                seringue.Consume();
-                seringue = null;
+                Instantiate(zombiePrefab, transform.position, Quaternion.identity);
+                DestroyImmediate(gameObject);
             }
-            
-            if (canCure && !isDead)
+            else
             {
-                if (roll <= infectionChance)
-                {
-                    Debug.Log("blud is dead");
-                    Instantiate(zombiePrefab, transform.position, Quaternion.identity);
-                    DestroyImmediate(gameObject);
-                }
-                else
-                {
-                    Debug.Log("Survivor cured!");
-                    isCured = true;
-
-                }
-                canCure = false;
+                Debug.Log("Survivor cured!");
+                isCured = true;
             }
         }
     }
@@ -234,6 +215,15 @@ public class Survivor : Entity
 
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, detectorRange);
+    }
+
+
+    protected override void Die()
+    {
+        Debug.Log("Un survivant est mort");
+
+        GameManager gameManager = GameManager.GetInstance();
+        gameManager.SurvivorDying();
     }
 
 }
