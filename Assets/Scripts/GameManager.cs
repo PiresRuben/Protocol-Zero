@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
     public int score = 0;
 
     public PassValue passeur;
+    [Space(10)]
+    public GameObject blood;
 
     private int nbrKill;
 

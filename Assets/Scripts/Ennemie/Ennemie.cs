@@ -126,6 +126,8 @@ public class Ennemie : Entity
 
         GameManager gameManager = GameManager.GetInstance();
         gameManager.EnnemieDying();
+        GameObject currentObject = Instantiate(gameManager.blood, Vector3.zero, Quaternion.identity);
+        currentObject.transform.SetParent(transform, false);
     }
 
 private void CheckNearbyPlayer()
